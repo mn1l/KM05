@@ -11,14 +11,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _exampleFunc() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,11 +23,6 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(child: Center(child: Text('Home Page'))),
           NavBar(),
         ]
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _exampleFunc,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

@@ -8,23 +8,43 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  void _tapFunc() {
-    return;
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text('Index 0: Home', style: optionStyle),
+    Text('Index 1: Huurproces', style: optionStyle),
+    Text('Index 2: Profiel', style: optionStyle),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
   
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Colors.blue,
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: _tapFunc,
-            child: Icon(Icons.favorite)
-          ),
-        ],
+Widget build(BuildContext context) {
+  return BottomNavigationBar(
+    type: BottomNavigationBarType.fixed,
+    backgroundColor: const Color(0xFF00509D), 
+    selectedItemColor: const Color(0xFFFFCB05), 
+    unselectedItemColor: Colors.white, 
+    currentIndex: _selectedIndex,
+    onTap: _onItemTapped,
+    items: const <BottomNavigationBarItem>[
+      BottomNavigationBarItem(
+        icon: Icon(Icons.home),
+        label: 'Home',
       ),
-    );
-  }
+      BottomNavigationBarItem(
+        icon: Icon(Icons.car_rental),
+        label: 'Huurproces',
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.person),
+        label: 'Profiel',
+      ),
+    ],
+  );
+}
 }
