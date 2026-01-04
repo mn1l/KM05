@@ -14,9 +14,6 @@ class Car {
   final String body;
   final double longitude;
   final double latitude;
-  final String? inspections;
-  final String? repairs;
-  final String? rentals;
 
   Car({
     required this.id,
@@ -34,9 +31,6 @@ class Car {
     required this.body,
     required this.longitude,
     required this.latitude,
-    this.inspections,
-    this.repairs,
-    this.rentals,
   });
 
   factory Car.fromJson(Map<String, dynamic> json) {
@@ -56,9 +50,6 @@ class Car {
       body: json['body'] as String,
       longitude: (json['longitude'] as num).toDouble(),
       latitude: (json['latitude'] as num).toDouble(),
-      inspections: json['inspections'] as String?,
-      repairs: json['repairs'] as String?,
-      rentals: json['rentals'] as String?,
     );
   }
 
@@ -79,9 +70,6 @@ class Car {
       'body': body,
       'longitude': longitude,
       'latitude': latitude,
-      'inspections': inspections,
-      'repairs': repairs,
-      'rentals': rentals,
     };
   }
 }
