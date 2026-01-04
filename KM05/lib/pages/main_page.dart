@@ -14,7 +14,7 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
-    MyHomePage(title: 'Autos'),
+    HomePage(),
     MyRentPage(title: 'Huurproces'),
     MyProfilePage(title: 'Profiel'),
   ];

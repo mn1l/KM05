@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carsmeelien/core/widgets/appbar.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key, required this.title});
@@ -13,9 +14,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppAppBar(titleText: widget.title),
       body: const Center(child: Text('Profile Page')),
     );
   }

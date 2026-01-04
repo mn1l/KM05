@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:carsmeelien/core/widgets/appbar.dart';
 
 class MyRegisterPage extends StatefulWidget {
   const MyRegisterPage({super.key, required this.title});
@@ -13,9 +14,7 @@ class _MyRegisterPageState extends State<MyRegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppAppBar(titleText: widget.title),
       body: const Center(child: Text('Register Page')),
     );
   }
