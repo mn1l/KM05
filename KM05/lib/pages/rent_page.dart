@@ -14,7 +14,16 @@ class _MyRentPageState extends State<MyRentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppAppBar(titleText: widget.title),
+      appBar: AppAppBar(
+        title: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(text: 'Auto', style: AppAppBar.titleTextStyle1),
+              TextSpan(text: 'Huren', style: AppAppBar.titleTextStyle2),
+            ],
+          ),
+        ),
+      ),
       body: const Center(child: Text('Rent Page')),
     );
   }
