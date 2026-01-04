@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
+import 'home/widgets/car_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -63,42 +64,13 @@ class _HomePageState extends State<HomePage> {
                 separatorBuilder: (_, __) => const SizedBox(width: 12),
                 itemBuilder: (context, index) {
                   final fav = favorites[index];
-                  return Container(
+                  return CarCard(
+                    model: fav['model']!,
+                    location: fav['location']!,
+                    status: fav['status']!,
+                    price: fav['price']!,
                     width: 220,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 80,
-                          decoration: BoxDecoration(
-                            color: AppColors.secondary,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              bottomLeft: Radius.circular(16),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(fav['model']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                Text(fav['location']!),
-                                Text(fav['status']!),
-                                Text(fav['price']!),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    imageWidth: 80,
                   );
                 },
               ),
@@ -112,42 +84,13 @@ class _HomePageState extends State<HomePage> {
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final car = cars[index];
-                  return Container(
+                  return CarCard(
+                    model: car['model']!,
+                    location: car['location']!,
+                    status: car['status']!,
+                    price: car['price']!,
                     height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 100,
-                          decoration: BoxDecoration(
-                            color: AppColors.secondary,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(16),
-                              bottomLeft: Radius.circular(16),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(car['model']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                Text(car['location']!),
-                                Text(car['status']!),
-                                Text(car['price']!),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    imageWidth: 100,
                   );
                 },
               ),
