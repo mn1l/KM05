@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
-import 'home/widgets/car_card.dart';
+import 'widgets/car_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
