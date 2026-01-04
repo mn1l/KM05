@@ -1,8 +1,8 @@
-import 'package:carsmeelien/pages/home_page.dart';
+import 'package:carsmeelien/pages/main_page.dart';
 import 'package:flutter/material.dart';
 
 ThemeData themeData = ThemeData(
-  colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+  colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
 );
 
 class MyApp extends StatelessWidget {
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'KM05 App',
       theme: themeData,
-      home: const MyHomePage(title: 'Home Page'),
+      home: const MainPage(),
     );
   }
 }

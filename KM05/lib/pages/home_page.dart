@@ -1,4 +1,3 @@
-import 'package:carsmeelien/components/navbar.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -18,12 +17,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Column(
-        children: const [
-          Expanded(child: Center(child: Text('Home Page'))),
-          NavBar(),
-        ]
-      ),
+      body: const Center(child: Text('Home Page')),
     );
   }
 }

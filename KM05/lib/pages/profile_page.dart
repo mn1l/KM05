@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class MyRegisterPage extends StatefulWidget {
-  const MyRegisterPage({super.key, required this.title});
+class MyProfilePage extends StatefulWidget {
+  const MyProfilePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyRegisterPage> createState() => _MyRegisterPageState();
+  State<MyProfilePage> createState() => _MyProfilePageState();
 }
 
-class _MyRegisterPageState extends State<MyRegisterPage> {
+class _MyProfilePageState extends State<MyProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +17,7 @@ class _MyRegisterPageState extends State<MyRegisterPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const Center(child: Text('Register Page')),
+      body: const Center(child: Text('Profile Page')),
     );
   }
 }
