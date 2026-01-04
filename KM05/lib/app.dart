@@ -1,9 +1,6 @@
 import 'package:carsmeelien/pages/main_page.dart';
 import 'package:flutter/material.dart';
-
-ThemeData themeData = ThemeData(
-  colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-);
+import 'package:carsmeelien/core/theme.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,7 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'KM05 App',
-      theme: themeData,
+      theme: appTheme,
       home: const MainPage(),
     );
   }
