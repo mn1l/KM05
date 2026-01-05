@@ -16,7 +16,7 @@ class _MainPageState extends State<MainPage> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     MyRentPage(title: 'Huurproces'),
-    MyProfilePage(title: 'Profiel'),
+    MyProfilePage(),
   ];
 
   void _onItemTapped(int index) {

@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 
 class MyProfilePage extends StatefulWidget {
-  const MyProfilePage({super.key, required this.title});
-
-  final String title;
+  const MyProfilePage({super.key});
 
   @override
   State<MyProfilePage> createState() => _MyProfilePageState();
@@ -24,7 +22,4 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ),
       ),
-      body: const Center(child: Text('Profile Page')),
-    );
   }
-}
