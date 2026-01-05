@@ -6,6 +6,7 @@ class CarCard extends StatelessWidget {
   final String location;
   final String status;
   final String price;
+  final String? imageUrl;
   final double? width;
   final double? height;
   final double imageWidth;
@@ -16,6 +17,7 @@ class CarCard extends StatelessWidget {
     required this.location,
     required this.status,
     required this.price,
+    this.imageUrl,
     this.width,
     this.height,
     this.imageWidth = 100,
@@ -32,15 +34,43 @@ class CarCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: imageWidth,
-            decoration: BoxDecoration(
-              color: AppColors.secondary,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                bottomLeft: Radius.circular(16),
-              ),
+          ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(16),
+              bottomLeft: Radius.circular(16),
             ),
+            child: imageUrl != null
+                ? Image.network(
+                    imageUrl!,
+                    width: imageWidth,
+                    height: height ?? double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: imageWidth,
+                        height: height ?? double.infinity,
+                        color: AppColors.secondary,
+                        child: const Icon(Icons.image_not_supported, color: Colors.white),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        width: imageWidth,
+                        height: height ?? double.infinity,
+                        color: AppColors.secondary,
+                        child: const Center(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        ),
+                      );
+                    },
+                  )
+                : Container(
+                    width: imageWidth,
+                    height: height ?? double.infinity,
+                    color: AppColors.secondary,
+                    child: const Icon(Icons.car_rental, color: Colors.white),
+                  ),
           ),
           Expanded(
             child: Padding(

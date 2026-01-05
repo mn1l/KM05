@@ -13,14 +13,44 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // Nep data
   final List<Map<String, String>> favorites = [
-    {'model': 'Tesla Model 3', 'location': 'Amsterdam', 'status': 'Beschikbaar', 'price': '€0,50/min'},
-    {'model': 'BMW i3', 'location': 'Rotterdam', 'status': 'Beschikbaar', 'price': '€0,45/min'},
+    {
+      'model': 'Tesla Model 3',
+      'location': 'Amsterdam',
+      'status': 'Beschikbaar',
+      'price': '€0,50/min',
+      'imageUrl': 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop',
+    },
+    {
+      'model': 'BMW i3',
+      'location': 'Rotterdam',
+      'status': 'Beschikbaar',
+      'price': '€0,45/min',
+      'imageUrl': 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop',
+    },
   ];
 
   final List<Map<String, String>> cars = [
-    {'model': 'Audi A1', 'location': 'Utrecht', 'status': 'Bezet', 'price': '€0,55/min'},
-    {'model': 'VW Golf', 'location': 'Den Haag', 'status': 'Beschikbaar', 'price': '€0,50/min'},
-    {'model': 'Mercedes A-Class', 'location': 'Amsterdam', 'status': 'Beschikbaar', 'price': '€0,60/min'},
+    {
+      'model': 'Audi A1',
+      'location': 'Utrecht',
+      'status': 'Bezet',
+      'price': '€0,55/min',
+      'imageUrl': 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&h=300&fit=crop',
+    },
+    {
+      'model': 'VW Golf',
+      'location': 'Den Haag',
+      'status': 'Beschikbaar',
+      'price': '€0,50/min',
+      'imageUrl': 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
+    },
+    {
+      'model': 'Mercedes A-Class',
+      'location': 'Amsterdam',
+      'status': 'Beschikbaar',
+      'price': '€0,60/min',
+      'imageUrl': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=300&fit=crop',
+    },
   ];
 
   @override
@@ -70,6 +100,7 @@ class _HomePageState extends State<HomePage> {
                     location: fav['location']!,
                     status: fav['status']!,
                     price: fav['price']!,
+                    imageUrl: fav['imageUrl'],
                     width: 220,
                     imageWidth: 80,
                   );
@@ -90,6 +121,7 @@ class _HomePageState extends State<HomePage> {
                     location: car['location']!,
                     status: car['status']!,
                     price: car['price']!,
+                    imageUrl: car['imageUrl'],
                     height: 100,
                     imageWidth: 100,
                   );
