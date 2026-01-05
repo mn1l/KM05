@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Favorieten', style: TextStyle(color: AppColors.darkBlue, fontSize: 30, fontWeight: FontWeight.bold)),
+                Text('Favorieten', style: AppTextStyles.sectionHeader),
                 TextButton(
                   onPressed: () {},
                   style: TextButton.styleFrom(
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 24),
-            Text('Auto\'s', style: TextStyle(color: AppColors.darkBlue, fontSize: 30, fontWeight: FontWeight.bold)),
+            Text('Auto\'s', style: AppTextStyles.sectionHeader),
             const SizedBox(height: 8),
             Expanded(
               child: ListView.separated(

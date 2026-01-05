@@ -8,6 +8,11 @@ class AppColors {
   static const Color background = Color(0xFFE0E0DE);
 }
 
+class AppTextStyles {
+  static const TextStyle sectionHeader = TextStyle(color: AppColors.darkBlue, fontSize: 30, fontWeight: FontWeight.bold,);
+  static const TextStyle sectionSubHeader = TextStyle(color: AppColors.darkBlue, fontSize: 24, fontWeight: FontWeight.bold,);
+}
+
 final ThemeData appTheme = ThemeData(
   scaffoldBackgroundColor: AppColors.background,
   primaryColor: AppColors.primary,
