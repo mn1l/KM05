@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 
-class MyDamageReportsPage extends StatefulWidget {
-  const DamageReportsPage({super.key, required this.title});
-
-  final String title;
+class DamageReportsPage extends StatefulWidget {
+  const DamageReportsPage({super.key});
 
   @override
   State<DamageReportsPage> createState() => _DamageReportsPageState();
 }
 
-class _DamageReportsPageState extends State<DamageReportsPagePage> {
+class _DamageReportsPageState extends State<DamageReportsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppAppBar(titleText: widget.title),
+      appBar: AppAppBar(titleText: 'Schademeldingen'),
       body: const Center(child: Text('Damage Reports Page')),
     );
   }
