@@ -9,8 +9,7 @@ class AppColors {
 }
 
 class AppTextStyles {
-  static const TextStyle sectionHeader = TextStyle(color: AppColors.darkBlue, fontSize: 30, fontWeight: FontWeight.bold,);
-  static const TextStyle sectionSubHeader = TextStyle(color: AppColors.darkBlue, fontSize: 24, fontWeight: FontWeight.bold,);
+  static const TextStyle sectionHeader = TextStyle(color: AppColors.darkBlue, fontSize: 28, fontWeight: FontWeight.bold,);
 }
 
 final ThemeData appTheme = ThemeData(
