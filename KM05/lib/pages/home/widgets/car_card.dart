@@ -5,7 +5,7 @@ class CarCard extends StatelessWidget {
   final String model;
   final String location;
   final String status;
-  final String price;
+  final int priceCents;
   final String? imageUrl;
   final double? width;
   final double? height;
@@ -16,7 +16,7 @@ class CarCard extends StatelessWidget {
     required this.model,
     required this.location,
     required this.status,
-    required this.price,
+    required this.priceCents,
     this.imageUrl,
     this.width,
     this.height,
@@ -82,7 +82,7 @@ class CarCard extends StatelessWidget {
                   Text(model, style: const TextStyle(fontWeight: FontWeight.bold)),
                   Text(location),
                   Text(status),
-                  Text(price),
+                  Text("€${(priceCents / 100).toStringAsFixed(2).replaceAll('.', ',')}/min"),
                 ],
               ),
             ),
