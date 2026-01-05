@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 
-class MyLoginPage extends StatefulWidget {
-  const MyLoginPage({super.key, required this.title});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyLoginPage> createState() => _MyLoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _MyLoginPageState extends State<MyLoginPage> {
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

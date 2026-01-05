@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/pages/home/home_page.dart';
 import 'package:carsmeelien/pages/rent_page.dart';
-import 'package:carsmeelien/pages/profile_page.dart';
+import 'package:carsmeelien/pages/profile/profile_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -15,8 +15,8 @@ class _MainPageState extends State<MainPage> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
-    MyRentPage(title: 'Huurproces'),
-    MyProfilePage(),
+    RentPage(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

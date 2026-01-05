@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 
-class MyRentPage extends StatefulWidget {
-  const MyRentPage({super.key, required this.title});
-
-  final String title;
+class RentPage extends StatefulWidget {
+  const RentPage({super.key});
 
   @override
-  State<MyRentPage> createState() => _MyRentPageState();
+  State<RentPage> createState() => _RentPageState();
 }
 
-class _MyRentPageState extends State<MyRentPage> {
+class _RentPageState extends State<RentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +22,6 @@ class _MyRentPageState extends State<MyRentPage> {
           ),
         ),
       ),
-      body: const Center(child: Text('Rent Page')),
     );
   }
 }

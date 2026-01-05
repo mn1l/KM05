@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 
-class MyHistoryPage extends StatefulWidget {
-  const MyHistoryPage({super.key, required this.title});
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHistoryPage> createState() => _MyLoginPageState();
+  State<HistoryPage> createState() => _LoginPageState();
 }
 
-class _MyHistoryPageState extends State<MyHistoryPagePage> {
+class _HistoryPageState extends State<HistoryPagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

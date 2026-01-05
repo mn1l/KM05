@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 
-class MyProfilePage extends StatefulWidget {
-  const MyProfilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  State<MyProfilePage> createState() => _MyProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _MyProfilePageState extends State<MyProfilePage> {
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

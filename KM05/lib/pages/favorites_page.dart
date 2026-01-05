@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 
-class MyFavoritesPage extends StatefulWidget {
-  const MyFavoritesPage({super.key, required this.title});
+class FavoritesPage extends StatefulWidget {
+  const FavoritesPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyFavoritesPage> createState() => _MyLoginPageState();
+  State<FavoritesPage> createState() => _FavoritesPageState();
 }
 
-class _MyFavoritesPageState extends State<MyFavoritesPagePage> {
+class _FavoritesPageState extends State<FavoritesPagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
