@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 
-class ProfileTextField extends StatelessWidget {
+class DataInputField extends StatelessWidget {
   final String hint;
   final IconData icon;
   final bool obscureText;
 
-  const ProfileTextField({
+  const DataInputField({
     super.key,
     required this.hint,
     required this.icon,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
-import 'package:carsmeelien/pages/profile/widgets/profile_text_field.dart';
+import 'package:carsmeelien/pages/profile/widgets/data_input_field.dart';
 import 'package:carsmeelien/pages/profile/widgets/info_tile.dart'; 
 import 'package:carsmeelien/pages/damage_reports/damage_reports_page.dart';
 import 'package:carsmeelien/pages/favorites_page.dart';
@@ -60,17 +60,17 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             child: Column(
               children: const [
-                ProfileTextField(
+                DataInputField(
                   hint: 'Naam',
                   icon: Icons.person_outline,
                 ),
                 SizedBox(height: 12),
-                ProfileTextField(
+                DataInputField(
                   hint: 'E-mailadres',
                   icon: Icons.email_outlined,
                 ),
                 SizedBox(height: 12),
-                ProfileTextField(
+                DataInputField(
                   hint: 'Wachtwoord',
                   icon: Icons.lock_outline,
                   obscureText: true,
