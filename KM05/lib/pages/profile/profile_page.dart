@@ -150,16 +150,16 @@ class _ProfilePageState extends State<ProfilePage> {
         width: double.infinity,
         child: OutlinedButton.icon(
           onPressed: () => _showLogoutConfirmation(context),
-          icon: const Icon(Icons.logout, color: Colors.red),
+          icon: const Icon(Icons.logout),
           label: const Text(
             'Uitloggen',
             style: TextStyle(
-              color: Colors.red,
               fontWeight: FontWeight.w600,
             ),
           ),
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: Colors.red),
+            backgroundColor: Color(0xFF960E29),
+            foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
