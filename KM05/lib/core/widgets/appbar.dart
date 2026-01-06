@@ -32,6 +32,10 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       toolbarHeight: 120,
       centerTitle: true,
+      iconTheme: const IconThemeData(
+        color: AppColors.darkBlue,
+        size: 32,
+      ),
       title: title ?? (titleText != null 
         ? Text(
             titleText!,
