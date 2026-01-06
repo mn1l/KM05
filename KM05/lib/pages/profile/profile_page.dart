@@ -6,6 +6,7 @@ import 'package:carsmeelien/pages/profile/widgets/info_tile.dart';
 import 'package:carsmeelien/pages/damage_reports/damage_reports_page.dart';
 import 'package:carsmeelien/pages/favorites_page.dart';
 import 'package:carsmeelien/pages/rent_history_page.dart';
+import 'package:carsmeelien/pages/login_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -36,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
             _userDataSection(),
             const SizedBox(height: 24),
             _informationSection(context),
+            _logoutSection(context),
           ],
         ),
       ),
@@ -135,6 +137,73 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _logoutSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+      child: SizedBox(
+        width: double.infinity,
+        child: OutlinedButton.icon(
+          onPressed: () => _showLogoutConfirmation(context),
+          icon: const Icon(Icons.logout, color: Colors.red),
+          label: const Text(
+            'Uitloggen',
+            style: TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          style: OutlinedButton.styleFrom(
+            side: const BorderSide(color: Colors.red),
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(
+            color: AppColors.darkYellow,
+            width: 4,
+          ),
+        ),
+        title: const Text('Uitloggen'),
+        content: const Text(
+          'Weet je zeker dat je wilt uitloggen?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Annuleren'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+
+              // TODO: Daadwerkelijke logout logica, voor nu is het alleen een voorbeeld redirect
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginPage()),
+                (route) => false,
+              );
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Uitloggen'),
           ),
         ],
       ),
