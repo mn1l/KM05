@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
-import 'package:carsmeelien/pages/home/widgets/car_card.dart';
+import 'package:carsmeelien/core/widgets/car_card.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});

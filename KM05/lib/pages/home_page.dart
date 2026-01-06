@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
-import 'widgets/car_card.dart';
+import 'package:carsmeelien/core/widgets/car_card.dart';
+import 'package:carsmeelien/pages/favorites_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -76,7 +77,14 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text('Favorieten', style: AppTextStyles.sectionHeader),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const FavoritesPage(),
+                      )
+                    );
+                  },
                   style: TextButton.styleFrom(
                     backgroundColor: AppColors.darkBlue,
                     foregroundColor: Colors.white,

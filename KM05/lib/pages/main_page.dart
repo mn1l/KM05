@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carsmeelien/pages/home/home_page.dart';
+import 'package:carsmeelien/pages/home_page.dart';
 import 'package:carsmeelien/pages/rent_page.dart';
 import 'package:carsmeelien/pages/profile/profile_page.dart';
 

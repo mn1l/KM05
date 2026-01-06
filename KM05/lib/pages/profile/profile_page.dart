@@ -3,7 +3,7 @@ import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/pages/profile/widgets/profile_text_field.dart';
 import 'package:carsmeelien/pages/profile/widgets/info_tile.dart'; 
-import 'package:carsmeelien/pages/damage_reports_page.dart';
+import 'package:carsmeelien/pages/damage_reports/damage_reports_page.dart';
 import 'package:carsmeelien/pages/favorites_page.dart';
 import 'package:carsmeelien/pages/rent_history_page.dart';
 
