@@ -192,8 +192,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
-
               // TODO: Daadwerkelijke logout logica, voor nu is het alleen een voorbeeld redirect
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginPage()),
