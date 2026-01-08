@@ -5,12 +5,14 @@ class DataInputField extends StatelessWidget {
   final String hint;
   final IconData icon;
   final bool obscureText;
+  final Widget? suffixIcon;
 
   const DataInputField({
     super.key,
     required this.hint,
     required this.icon,
     this.obscureText = false,
+    this.suffixIcon,
   });
 
   @override
@@ -18,10 +20,12 @@ class DataInputField extends StatelessWidget {
     return TextField(
       obscureText: obscureText,
       style: const TextStyle(color: AppColors.darkBlue), 
+      cursorColor: AppColors.darkBlue,
       decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: AppColors.darkBlue), 
+        prefixIcon: Icon(icon, color: AppColors.darkBlue),
+        suffixIcon: suffixIcon,
         hintText: hint,
-        hintStyle: TextStyle(color: AppColors.darkBlue.withOpacity(0.6)),
+        hintStyle: TextStyle(color: AppColors.darkBlue.withOpacity(0.6),),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.darkBlue), 
@@ -35,7 +39,6 @@ class DataInputField extends StatelessWidget {
           vertical: 14,
         ),
       ),
-      cursorColor: AppColors.darkBlue,
     );
   }
 }
