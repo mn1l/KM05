@@ -2,22 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 
 class CarCard extends StatelessWidget {
-  final String model;
-  final String location;
-  final String status;
-  final int priceCents;
-  final String? imageUrl;
+  final String brand;
+  final String? model;
+  final String? picture;
+  final String? licensePlate;
   final double? width;
   final double? height;
   final double imageWidth;
 
   const CarCard({
     super.key,
+    required this.brand,
     required this.model,
-    required this.location,
-    required this.status,
-    required this.priceCents,
-    this.imageUrl,
+    this.licensePlate,
+    this.picture,
     this.width,
     this.height,
     this.imageWidth = 100,
@@ -39,9 +37,9 @@ class CarCard extends StatelessWidget {
               topLeft: Radius.circular(16),
               bottomLeft: Radius.circular(16),
             ),
-            child: imageUrl != null
+            child: picture != null
                 ? Image.network(
-                    imageUrl!,
+                    picture!,
                     width: imageWidth,
                     height: height ?? double.infinity,
                     fit: BoxFit.cover,
@@ -50,7 +48,10 @@ class CarCard extends StatelessWidget {
                         width: imageWidth,
                         height: height ?? double.infinity,
                         color: AppColors.secondary,
-                        child: const Icon(Icons.image_not_supported, color: Colors.white),
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: Colors.white,
+                        ),
                       );
                     },
                     loadingBuilder: (context, child, loadingProgress) {
@@ -79,10 +80,11 @@ class CarCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(model, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(location),
-                  Text(status),
-                  Text("€${(priceCents / 100).toStringAsFixed(2).replaceAll('.', ',')}/min"),
+                  Text(
+                    model ?? '',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(licensePlate ?? '123'),
                 ],
               ),
             ),
@@ -98,4 +100,3 @@ class CarCard extends StatelessWidget {
     return card;
   }
 }
-
