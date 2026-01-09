@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/pages/home_page.dart';
-import 'package:carsmeelien/pages/rent_page.dart';
+import 'package:carsmeelien/pages/rent/rent_page.dart';
 import 'package:carsmeelien/pages/profile/profile_page.dart';
 
 class MainPage extends StatefulWidget {
