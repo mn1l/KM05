@@ -1,3 +1,5 @@
+import 'package:carsmeelien/models/car.dart';
+import 'package:carsmeelien/services/resource/cars.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
@@ -12,47 +14,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Future<List<Car>> _carsFuture;
   // Nep data
   final List<Map<String, dynamic>> favorites = [
     {
+      'brand': 'Tesla',
       'model': 'Tesla Model 3',
       'location': 'Amsterdam',
       'status': 'Beschikbaar',
       'priceCents': 50,
-      'imageUrl': 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop',
     },
     {
+      'brand': 'BMW',
       'model': 'BMW i3',
       'location': 'Rotterdam',
       'status': 'Beschikbaar',
       'priceCents': 45,
-      'imageUrl': 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop',
+      'imageUrl':
+          'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop',
     },
   ];
 
-  final List<Map<String, dynamic>> cars = [
-    {
-      'model': 'Audi A1',
-      'location': 'Utrecht',
-      'status': 'Bezet',
-      'priceCents': 55,
-      'imageUrl': 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&h=300&fit=crop',
-    },
-    {
-      'model': 'VW Golf',
-      'location': 'Den Haag',
-      'status': 'Beschikbaar',
-      'priceCents': 50,
-      'imageUrl': 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
-    },
-    {
-      'model': 'Mercedes A-Class',
-      'location': 'Amsterdam',
-      'status': 'Beschikbaar',
-      'priceCents': 60,
-      'imageUrl': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=300&fit=crop',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _carsFuture = getAvailableCars();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,15 +69,15 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const FavoritesPage(),
-                      )
+                      MaterialPageRoute(builder: (_) => const FavoritesPage()),
                     );
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: AppColors.darkBlue,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: const Text('Zie alles'),
                 ),
@@ -104,11 +93,9 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   final fav = favorites[index];
                   return CarCard(
+                    brand: fav['brand'],
                     model: fav['model']!,
-                    location: fav['location']!,
-                    status: fav['status']!,
-                    priceCents: fav['priceCents']!,
-                    imageUrl: fav['imageUrl'],
+                    picture: fav['imageUrl'],
                     width: 220,
                     imageWidth: 80,
                   );
@@ -119,19 +106,43 @@ class _HomePageState extends State<HomePage> {
             Text('Auto\'s', style: AppTextStyles.sectionHeader),
             const SizedBox(height: 8),
             Expanded(
-              child: ListView.separated(
-                itemCount: cars.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final car = cars[index];
-                  return CarCard(
-                    model: car['model']!,
-                    location: car['location']!,
-                    status: car['status']!,
-                    priceCents: car['priceCents']!,
-                    imageUrl: car['imageUrl'],
-                    height: 100,
-                    imageWidth: 100,
+              child: FutureBuilder<List<Car>>(
+                future: _carsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Fout bij laden: ${snapshot.error}',
+                        style: AppTextStyles.sectionHeader,
+                      ),
+                    );
+                  }
+
+                  final cars = snapshot.data!;
+
+                  if (cars.isEmpty) {
+                    return const Center(child: Text('Geen auto’s gevonden'));
+                  }
+
+                  return ListView.separated(
+                    itemCount: cars.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final car = cars[index];
+
+                      return CarCard(
+                        brand: car.brand,
+                        model: car.model,
+                        licensePlate: car.licensePlate,
+                        picture: car.picture,
+                        height: 100,
+                        imageWidth: 100,
+                      );
+                    },
                   );
                 },
               ),
