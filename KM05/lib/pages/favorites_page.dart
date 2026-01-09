@@ -64,11 +64,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 itemBuilder: (context, index) {
                   final car = favoriteCars[index];
                   return CarCard(
+                    brand: car['brand'],
                     model: car['model']!,
-                    location: car['location']!,
-                    status: car['status']!,
-                    priceCents: car['priceCents']!,
-                    imageUrl: car['imageUrl'],
+                    picture: car['picture'],
                     height: 100,
                     imageWidth: 100,
                   );

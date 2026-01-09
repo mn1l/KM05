@@ -15,11 +15,11 @@ class Customer {
 
   factory Customer.fromJson(Map<String, dynamic> json) {
     return Customer(
-      id: json['id'] as int,
-      nr: json['nr'] as int,
-      lastName: json['lastName'] as String,
-      firstName: json['firstName'] as String,
-      from: json['from'] as String,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      nr: (json['nr'] as num?)?.toInt() ?? 0,
+      lastName: json['lastName'] as String? ?? '',
+      firstName: json['firstName'] as String? ?? '',
+      from: json['from'] as String? ?? '',
     );
   }
 

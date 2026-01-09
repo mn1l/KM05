@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:carsmeelien/models/car.dart';
+import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:http/http.dart' as http;
 
 const apiUrl = 'http://192.168.178.42:8080/api/cars';
@@ -18,14 +19,20 @@ Future<Car> getCar(int id) async {
   return Car.fromJson(decoded);
 }
 
-Future<Car> updateCar(int id, Car car) async {}
+Future<void> updateCar(int id, Car car) async {}
 
-Future<bool> deleteCar(int id) async {}
+Future<bool> deleteCar(int id) async {
+  return false;
+}
 
 Future<void> patchCar(int id, Car car) async {}
 
 Future<List<Car>> getCars() async {
-  final response = await http.get(Uri.parse(apiUrl));
+  final response = await http.get(Uri.parse(apiUrl),
+    headers: {
+      "Authorization":
+          'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc3MDQ4MjQ5MiwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzY3ODkwNDkyfQ.rYDZRbf59r62ig7E7WbnpkSLMikzrBIvPk2vQ5taO7fomYJhW1KnNcRLuqAll_6jXHCN5p2xWo-Zj9vRjJdDXw',
+    },);
 
   if (response.statusCode != 200) {
     throw Exception('Failed to get cars: ${response.statusCode}');
@@ -38,18 +45,36 @@ Future<List<Car>> getCars() async {
       .toList();
 }
 
+Future<List<Car>> getAvailableCars() async {
+  final cars = await getCars();
+
+  final reservedRentals = await getRentalsByState("RESERVED");
+  final activeRentals = await getRentalsByState("ACTIVE");
+
+  final rentals = reservedRentals + activeRentals;
+
+  cars.map((car) => {
+    rentals.map((rental) => {
+      if (rental.car == car) cars.remove(car)
+    })
+  });
+
+  return cars;
+}
+
 Future<Car> postCar(Car car) async {
   final response = await http.post(
     Uri.parse(apiUrl),
-    headers: <String, String>{'Content-Type': 'application/json'}, // Moet nog access token bij vgm
+    headers: <String, String>{
+      'Content-Type': 'application/json',
+    }, // Moet nog access token bij vgm
     body: car.toJson(),
   );
 
   if (response.statusCode != 200) {
     throw Exception('Failed to post car: ${response.statusCode}');
   }
-  
-  
+
   final Map<String, dynamic> decoded =
       jsonDecode(response.body) as Map<String, dynamic>;
 

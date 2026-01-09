@@ -1,3 +1,7 @@
+import 'package:carsmeelien/models/inspection.dart';
+import 'package:carsmeelien/models/rental.dart';
+import 'package:carsmeelien/models/repair.dart';
+
 class Car {
   final int id;
   final String brand;
@@ -14,6 +18,9 @@ class Car {
   final String body;
   final double longitude;
   final double latitude;
+  final List<Inspection>? inspections;
+  final List<Repair>? repairs;
+  final List<Rental>? rentals;
 
   Car({
     required this.id,
@@ -31,25 +38,47 @@ class Car {
     required this.body,
     required this.longitude,
     required this.latitude,
+    this.inspections,
+    this.repairs,
+    this.rentals,
   });
 
   factory Car.fromJson(Map<String, dynamic> json) {
+    final inspectionsJson = json['inspections'] as List<dynamic>?;
+    final repairsJson = json['repairs'] as List<dynamic>?;
+    final rentalsJson = json['rentals'] as List<dynamic>?;
+
     return Car(
-      id: json['id'] as int,
+      id: (json['id'] as num?)?.toInt() ?? 0,
       brand: json['brand'] as String,
       model: json['model'] as String,
       picture: json['picture'] as String,
       fuel: json['fuel'] as String,
       options: json['options'] as String,
-      licensePlate: json['license_plate'] as String,
-      engineSize: json['engine_size'] as int,
-      modelYear: json['model_year'] as int,
+      licensePlate: json['licensePlate'] as String,
+      engineSize: (json['engineSize'] as num?)?.toInt() ?? 0,
+      modelYear: (json['modelYear'] as num?)?.toInt() ?? 0,
       since: json['since'] as String,
-      price: json['price'] as int,
-      nrOfSeats: json['nr_of_seats'] as int,
+      price: (json['price'] as num?)?.toInt() ?? 0,
+      nrOfSeats: (json['nrOfSeats'] as num?)?.toInt() ?? 0,
       body: json['body'] as String,
-      longitude: (json['longitude'] as num).toDouble(),
-      latitude: (json['latitude'] as num).toDouble(),
+      longitude: (json['longitude'] as num).toDouble() ?? 0.0,
+      latitude: (json['latitude'] as num).toDouble() ?? 0.0,
+      inspections:
+          inspectionsJson
+              ?.map((e) => Inspection.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [], // default empty list if null
+      repairs:
+          repairsJson
+              ?.map((e) => Repair.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [], // default empty list if null
+      rentals:
+          rentalsJson
+              ?.map((e) => Rental.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [], // default empty list if null
     );
   }
 
@@ -61,12 +90,12 @@ class Car {
       'picture': picture,
       'fuel': fuel,
       'options': options,
-      'license_plate': licensePlate,
-      'engine_size': engineSize,
-      'model_year': modelYear,
+      'licensePlate': licensePlate,
+      'engineSize': engineSize,
+      'modelYear': modelYear,
       'since': since,
       'price': price,
-      'nr_of_seats': nrOfSeats,
+      'nrOfSeats': nrOfSeats,
       'body': body,
       'longitude': longitude,
       'latitude': latitude,

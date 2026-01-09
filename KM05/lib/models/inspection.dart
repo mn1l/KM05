@@ -21,14 +21,14 @@ class Inspection {
 
   factory Inspection.fromJson(Map<String, dynamic> json) {
     return Inspection(
-      id: json['id'] as int,
-      code: json['code'] as String,
-      odometer: json['odometer'] as int,
-      result: json['result'] as String,
-      description: json['description'] as String,
-      photo: json['photo'] as String,
-      photoContentType: json['photoContentType'] as String,
-      completed: json['completed'] as String,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      code: json['code'] as String? ?? '',
+      odometer: (json['odometer'] as num?)?.toInt() ?? 0,
+      result: json['result'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      photo: json['photo'] as String? ?? '',
+      photoContentType: json['photoContentType'] as String? ?? '',
+      completed: json['completed'] as String? ?? '',
     );
   }
 

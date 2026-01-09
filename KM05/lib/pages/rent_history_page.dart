@@ -14,6 +14,7 @@ class _RentHistoryPageState extends State<RentHistoryPage> {
   // Nep data
   final List<Map<String, dynamic>> rentHistory = [
     {
+      'brand': 'Volkswagen',
       'model': 'VW Golf',
       'location': 'Den Haag',
       'status': 'Voltooid',
@@ -21,6 +22,7 @@ class _RentHistoryPageState extends State<RentHistoryPage> {
       'imageUrl': 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
     },
     {
+      'brand': 'Volkswagen',
       'model': 'Mercedes A-Class',
       'location': 'Amsterdam',
       'status': 'Voltooid',
@@ -28,6 +30,7 @@ class _RentHistoryPageState extends State<RentHistoryPage> {
       'imageUrl': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=300&fit=crop',
     },
     {
+      'brand': 'Volkswagen',
       'model': 'Tesla Model 3',
       'location': 'Amsterdam',
       'status': 'Voltooid',
@@ -64,11 +67,9 @@ class _RentHistoryPageState extends State<RentHistoryPage> {
                 itemBuilder: (context, index) {
                   final car = rentHistory[index];
                   return CarCard(
+                    brand: car['brand'],
                     model: car['model']!,
-                    location: car['location']!,
-                    status: car['status']!,
-                    priceCents: car['priceCents']!,
-                    imageUrl: car['imageUrl'],
+                    picture: car['picture'],
                     height: 100,
                     imageWidth: 100,
                   );
