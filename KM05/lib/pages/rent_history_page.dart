@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/car_card.dart';
+import 'package:carsmeelien/models/rental.dart';
+import 'package:carsmeelien/services/resource/rentals.dart';
 
 class RentHistoryPage extends StatefulWidget {
   const RentHistoryPage({super.key});
@@ -11,33 +13,20 @@ class RentHistoryPage extends StatefulWidget {
 }
 
 class _RentHistoryPageState extends State<RentHistoryPage> {
-  // Nep data
-  final List<Map<String, dynamic>> rentHistory = [
-    {
-      'brand': 'Volkswagen',
-      'model': 'VW Golf',
-      'location': 'Den Haag',
-      'status': 'Voltooid',
-      'priceCents': 50,
-      'imageUrl': 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=300&fit=crop',
-    },
-    {
-      'brand': 'Volkswagen',
-      'model': 'Mercedes A-Class',
-      'location': 'Amsterdam',
-      'status': 'Voltooid',
-      'priceCents': 60,
-      'imageUrl': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=300&fit=crop',
-    },
-    {
-      'brand': 'Volkswagen',
-      'model': 'Tesla Model 3',
-      'location': 'Amsterdam',
-      'status': 'Voltooid',
-      'priceCents': 50,
-      'imageUrl': 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop',
-    },
-  ];
+  late Future<List<Rental>> _rentalsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _rentalsFuture = getRentals();
+  }
+
+  List<Rental> _getCompletedRentals(List<Rental> rentals) {
+    return rentals
+        .where((rental) =>
+            rental.state.toUpperCase() == 'RETURNED')
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,27 +43,48 @@ class _RentHistoryPageState extends State<RentHistoryPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: rentHistory.isEmpty
-            ? const Center(
+        child: FutureBuilder<List<Rental>>(
+          future: _rentalsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Fout bij laden: ${snapshot.error}',
+                  style: AppTextStyles.sectionHeader,
+                ),
+              );
+            }
+
+            final allRentals = snapshot.data ?? [];
+            final completedRentals = _getCompletedRentals(allRentals);
+
+            if (completedRentals.isEmpty) {
+              return const Center(
                 child: Text(
                   'Geen huurgeschiedenis gevonden',
                   style: TextStyle(fontSize: 16),
                 ),
-              )
-            : ListView.separated(
-                itemCount: rentHistory.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final car = rentHistory[index];
-                  return CarCard(
-                    brand: car['brand'],
-                    model: car['model']!,
-                    picture: car['picture'],
-                    height: 100,
-                    imageWidth: 100,
-                  );
-                },
-              ),
+              );
+            }
+
+            return ListView.separated(
+              itemCount: completedRentals.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final rental = completedRentals[index];
+                return CarCard(
+                  car: rental.car,
+                  height: 100,
+                  imageWidth: 100,
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
