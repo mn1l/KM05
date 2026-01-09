@@ -49,28 +49,6 @@ class Car {
     final rentalsJson = json['rentals'] as List<dynamic>?;
 
     String picture = (json['picture'] as String?) ?? '';
-    
-    bool _isBase64String(String str) {
-      if (str.isEmpty || str.length < 100) return false;
-      
-      if (str.startsWith('/9j/') || str.startsWith('9j/') || str.startsWith('iVBORw0KGgo')) {
-        return true;
-      }
-      
-      final base64Pattern = RegExp(r'^[A-Za-z0-9+/=\s\n\r]+$');
-      return base64Pattern.hasMatch(str) && str.length > 500;
-    }
-    
-    final isBase64Data = picture.startsWith('data:image/') || _isBase64String(picture);
-    
-    if (picture.isNotEmpty && 
-        !isBase64Data && 
-        !picture.startsWith('http://') && 
-        !picture.startsWith('https://') &&
-        picture.startsWith('/')) {
-      const baseUrl = 'http://192.168.178.42:8080';
-      picture = '$baseUrl$picture';
-    }
 
     return Car(
       id: (json['id'] as num?)?.toInt() ?? 0,
