@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/models/car.dart';
+import 'package:carsmeelien/pages/info_page.dart';
 
 class CarCard extends StatelessWidget {
   final Car car;
@@ -101,10 +102,35 @@ class CarCard extends StatelessWidget {
     );
 
     if (width != null) {
-      return SizedBox(width: width, child: card);
+      return SizedBox(
+        width: width,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => InfoPage(car: car),
+              ),
+            );
+          },
+          child: card,
+        ),
+      );
     }
 
-    return card;
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InfoPage(car: car),
+          ),
+        );
+      },
+      child: card,
+    );
   }
 
   Widget _buildImageWidget() {
