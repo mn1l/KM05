@@ -5,6 +5,7 @@ import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/pages/rent/widgets/step_indicator.dart';	
 import 'package:carsmeelien/pages/rent/widgets/car_info_card.dart';
 import 'package:carsmeelien/pages/rent/widgets/expandable_sections.dart';
+import 'package:carsmeelien/pages/rent/navigation_page.dart';
 import 'dart:convert';
 
 class InfoPage extends StatelessWidget {
@@ -60,7 +61,12 @@ class InfoPage extends StatelessWidget {
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NavigationPage(car: car)),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.darkBlue,
                   shape: RoundedRectangleBorder(
