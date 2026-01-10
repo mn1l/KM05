@@ -32,7 +32,7 @@ class InfoPage extends StatelessWidget {
             const SizedBox(height: 24),
 
             Text(
-              '${car.brand} / ${car.model}',
+              '${car.brand} ${car.model} ${car.modelYear}',
               style: AppTextStyles.sectionHeader,
             ),
             const SizedBox(height: 16),
@@ -161,7 +161,6 @@ class _CarInfoCard extends StatelessWidget {
             _InfoRow(label: 'Kenteken', value: car.licensePlate),
             _InfoRow(label: 'Brandstof', value: car.fuel),
             _InfoRow(label: 'Motorinhoud', value: car.engineSize.toString()),
-            _InfoRow(label: 'Modeljaar', value: car.modelYear.toString()),
             _InfoRow(label: 'Aantal zitplaatsen', value: car.nrOfSeats.toString()),
             _InfoRow(label: 'Carrosserie', value: car.body),
             _InfoRow(label: 'Prijs/dag', value: '€${car.price.toStringAsFixed(2)}', isBold: true),
