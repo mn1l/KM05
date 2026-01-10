@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/models/car.dart';
-import 'package:carsmeelien/pages/info_page.dart';
+import 'package:carsmeelien/pages/rent/info_page.dart';
 
 class CarCard extends StatelessWidget {
   final Car car;
