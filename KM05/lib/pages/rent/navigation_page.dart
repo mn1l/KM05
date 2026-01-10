@@ -7,6 +7,7 @@ import 'package:carsmeelien/core/theme.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:carsmeelien/config/api_keys.dart';
 
 class NavigationPage extends StatefulWidget {
   final Car? car;
@@ -67,7 +68,7 @@ class _NavigationPageState extends State<NavigationPage> {
     final response = await http.post(
       url,
       headers: {
-        'Authorization': apiKey,
+        'Authorization': ApiKeys.openRouteServiceKey,
         'Content-Type': 'application/json',
       },
       body: body,
