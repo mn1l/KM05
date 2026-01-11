@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:carsmeelien/models/car.dart';
+import 'package:carsmeelien/services/auth/token.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,11 +29,11 @@ Future<bool> deleteCar(int id) async {
 Future<void> patchCar(int id, Car car) async {}
 
 Future<List<Car>> getCars() async {
-  final response = await http.get(Uri.parse(apiUrl),
-    headers: {
-      "Authorization":
-          'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc3MDQ4MjQ5MiwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzY3ODkwNDkyfQ.rYDZRbf59r62ig7E7WbnpkSLMikzrBIvPk2vQ5taO7fomYJhW1KnNcRLuqAll_6jXHCN5p2xWo-Zj9vRjJdDXw',
-    },);
+  TokenService tokenService = TokenService();
+  final response = await http.get(
+    Uri.parse(apiUrl),
+    headers: {"Authorization": 'Bearer ${await tokenService.getToken()}'},
+  );
 
   if (response.statusCode != 200) {
     throw Exception('Failed to get cars: ${response.statusCode}');
@@ -53,11 +54,11 @@ Future<List<Car>> getAvailableCars() async {
 
   final rentals = reservedRentals + activeRentals;
 
-  cars.map((car) => {
-    rentals.map((rental) => {
-      if (rental.car == car) cars.remove(car)
-    })
-  });
+  cars.map(
+    (car) => {
+      rentals.map((rental) => {if (rental.car == car) cars.remove(car)}),
+    },
+  );
 
   return cars;
 }

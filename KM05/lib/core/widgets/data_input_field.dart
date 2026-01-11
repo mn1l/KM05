@@ -6,6 +6,7 @@ class DataInputField extends StatelessWidget {
   final IconData icon;
   final bool obscureText;
   final Widget? suffixIcon;
+  final TextEditingController? controller;
 
   const DataInputField({
     super.key,
@@ -13,11 +14,13 @@ class DataInputField extends StatelessWidget {
     required this.icon,
     this.obscureText = false,
     this.suffixIcon,
+    this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       obscureText: obscureText,
       style: const TextStyle(color: AppColors.darkBlue), 
       cursorColor: AppColors.darkBlue,

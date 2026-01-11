@@ -1,3 +1,4 @@
+import 'package:carsmeelien/services/auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/data_input_field.dart';
@@ -14,6 +15,55 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  final TextEditingController _loginController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
+  @override
+  void dispose() {
+    _loginController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  void _handleRegister() async {
+    final login = _loginController.text.trim();
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    // Validate passwords match
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Wachtwoorden komen niet overeen'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      await register(login, firstName, lastName, email, password);
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+        (route) => false,
+      );
+    } catch (e) {
+      print("Registration error");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +101,16 @@ class _RegisterPageState extends State<RegisterPage> {
 
                       const SizedBox(height: 32),
 
-                      const DataInputField(
-                        hint: 'Naam',
+                      DataInputField(
+                        controller: _loginController,
+                        hint: 'Gebruikersnaam',
                         icon: Icons.person_outline,
                       ),
 
                       const SizedBox(height: 20),
 
-                      const DataInputField(
+                      DataInputField(
+                        controller: _emailController,
                         hint: 'E-mailadres',
                         icon: Icons.email_outlined,
                       ),
@@ -66,6 +118,23 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 20),
 
                       DataInputField(
+                        controller: _firstNameController,
+                        hint: 'Voornaam',
+                        icon: Icons.person_outline,
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      DataInputField(
+                        controller: _lastNameController,
+                        hint: 'Achternaam',
+                        icon: Icons.person_outline,
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      DataInputField(
+                        controller: _passwordController,
                         hint: 'Wachtwoord',
                         icon: Icons.lock_outline,
                         obscureText: _obscurePassword,
@@ -87,6 +156,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 20),
 
                       DataInputField(
+                        controller: _confirmPasswordController,
                         hint: 'Wachtwoord herhalen',
                         icon: Icons.lock_outline,
                         obscureText: _obscureConfirmPassword,
@@ -112,12 +182,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const MainPage()),
-                              (route) => false,
-                            );
-                          },
+                          onPressed: _handleRegister,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.darkBlue,
                             shape: RoundedRectangleBorder(

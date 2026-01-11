@@ -7,12 +7,10 @@ import 'package:http/http.dart' as http;
 const apiUrl = 'http://192.168.178.42:8080/api/rentals';
 
 Future<List<Rental>> getRentals() async {
+  TokenService tokenService = TokenService();
   final response = await http.get(
     Uri.parse(apiUrl),
-    headers: {
-      "Authorization":
-          'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTc3MDQ4MjQ5MiwiYXV0aCI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaWF0IjoxNzY3ODkwNDkyfQ.rYDZRbf59r62ig7E7WbnpkSLMikzrBIvPk2vQ5taO7fomYJhW1KnNcRLuqAll_6jXHCN5p2xWo-Zj9vRjJdDXw',
-    },
+    headers: {"Authorization": 'Bearer ${await tokenService.getToken()}'},
   );
 
   if (response.statusCode != 200) {

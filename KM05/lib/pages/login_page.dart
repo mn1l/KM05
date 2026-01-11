@@ -1,3 +1,4 @@
+import 'package:carsmeelien/services/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/data_input_field.dart';
@@ -13,6 +14,33 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _handleLogin() async {
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    try {
+      await login(username, password);
+
+      // Navigate to main page
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const MainPage()),
+        (route) => false,
+      );
+    } catch(e) {
+      // Error message
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +50,10 @@ class _LoginPageState extends State<LoginPage> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 240),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 240,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
@@ -37,10 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 8),
                   Text(
                     'Welkom bij Automaat',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ],
               ),
@@ -72,14 +100,16 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 32),
 
-                      const DataInputField(
-                        hint: 'E-mailadres',
-                        icon: Icons.email_outlined,
+                      DataInputField(
+                        controller: _usernameController,
+                        hint: 'Gebruikersnaam',
+                        icon: Icons.person_outline,
                       ),
 
                       const SizedBox(height: 20),
 
                       DataInputField(
+                        controller: _passwordController,
                         hint: 'Wachtwoord',
                         icon: Icons.lock_outline,
                         obscureText: _obscurePassword,
@@ -120,12 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const MainPage()),
-                              (route) => false,
-                            );
-                          },
+                          onPressed: _handleLogin,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.darkBlue,
                             shape: RoundedRectangleBorder(
@@ -155,7 +180,9 @@ class _LoginPageState extends State<LoginPage> {
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(builder: (_) => const RegisterPage()),
+                                MaterialPageRoute(
+                                  builder: (_) => const RegisterPage(),
+                                ),
                                 (route) => false,
                               );
                             },

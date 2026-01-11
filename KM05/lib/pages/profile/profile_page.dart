@@ -1,8 +1,9 @@
+import 'package:carsmeelien/services/auth/token.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/data_input_field.dart';
-import 'package:carsmeelien/pages/profile/widgets/info_tile.dart'; 
+import 'package:carsmeelien/pages/profile/widgets/info_tile.dart';
 import 'package:carsmeelien/pages/damage_reports/damage_reports_page.dart';
 import 'package:carsmeelien/pages/favorites_page.dart';
 import 'package:carsmeelien/pages/rent_history_page.dart';
@@ -53,22 +54,16 @@ class _ProfilePageState extends State<ProfilePage> {
           Text('Gegevens', style: AppTextStyles.sectionHeader),
           const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.all(16), 
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
               children: const [
-                DataInputField(
-                  hint: 'Naam',
-                  icon: Icons.person_outline,
-                ),
+                DataInputField(hint: 'Naam', icon: Icons.person_outline),
                 SizedBox(height: 12),
-                DataInputField(
-                  hint: 'E-mailadres',
-                  icon: Icons.email_outlined,
-                ),
+                DataInputField(hint: 'E-mailadres', icon: Icons.email_outlined),
                 SizedBox(height: 12),
                 DataInputField(
                   hint: 'Wachtwoord',
@@ -105,9 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const FavoritesPage(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const FavoritesPage()),
                     );
                   },
                 ),
@@ -153,9 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
           icon: const Icon(Icons.logout),
           label: const Text(
             'Uitloggen',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600),
           ),
           style: OutlinedButton.styleFrom(
             backgroundColor: Color(0xFF960E29),
@@ -171,36 +162,31 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _showLogoutConfirmation(BuildContext context) {
+    TokenService tokenService = TokenService();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(
-            color: AppColors.darkYellow,
-            width: 4,
-          ),
+          side: const BorderSide(color: AppColors.darkYellow, width: 4),
         ),
         title: const Text('Uitloggen'),
-        content: const Text(
-          'Weet je zeker dat je wilt uitloggen?',
-        ),
+        content: const Text('Weet je zeker dat je wilt uitloggen?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Annuleren'),
           ),
           TextButton(
-            onPressed: () {
-              // TODO: Daadwerkelijke logout logica, voor nu is het alleen een voorbeeld redirect
+            onPressed: () async {
+              await tokenService.clearToken();
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginPage()),
                 (route) => false,
               );
             },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Uitloggen'),
           ),
         ],

@@ -26,4 +26,7 @@ Future<void> login(String username, String password) async {
   if (idToken == null || idToken.isEmpty) {
     throw Exception('Response incomplete: Missing or invalid idToken');
   }
+
+  TokenService tokenService = TokenService();
+  await tokenService.saveToken(idToken);
 }

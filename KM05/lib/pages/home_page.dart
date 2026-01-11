@@ -1,4 +1,6 @@
 import 'package:carsmeelien/models/car.dart';
+import 'package:carsmeelien/pages/login_page.dart';
+import 'package:carsmeelien/services/auth/token.dart';
 import 'package:carsmeelien/services/resource/cars.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
@@ -14,6 +16,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TokenService tokenService = TokenService();
+  bool _isLoading = true;
+
   late Future<List<Car>> _carsFuture;
   // Nep data
   final List<Map<String, dynamic>> favorites = [
@@ -41,10 +46,30 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _carsFuture = getAvailableCars();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAuth();
+    });
+  }
+
+  Future<void> _checkAuth() async {
+    // Assuming your tokenService is imported or available
+    bool authorized = await tokenService.isAuthorized();
+
+    if (authorized) {
+      setState(() => _isLoading = false);
+    }
+    else if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     return Scaffold(
       appBar: AppAppBar(
         title: RichText(
