@@ -56,6 +56,8 @@ class _RegisterPageState extends State<RegisterPage> {
     try {
       await register(login, firstName, lastName, email, password);
 
+      print(email);
+
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const LoginPage()),
         (route) => false,

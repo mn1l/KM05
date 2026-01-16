@@ -1,3 +1,5 @@
+import 'package:carsmeelien/models/account.dart';
+import 'package:carsmeelien/services/auth/account.dart';
 import 'package:carsmeelien/services/auth/token.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
@@ -17,6 +19,36 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  Account? account;
+
+  final TextEditingController _loginController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getAccount();
+    });
+  }
+
+  @override
+  void dispose() {
+    _loginController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _getAccount() async {
+    final fetchedAccount = await getAccountDetails();
+
+    setState(() {
+      account = fetchedAccount;
+      _loginController.text = account?.login ?? '';
+      _emailController.text = account?.email ?? '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,8 +56,8 @@ class _ProfilePageState extends State<ProfilePage> {
         title: RichText(
           text: TextSpan(
             children: [
-              TextSpan(text: 'Hallo', style: AppAppBar.titleTextStyle1),
-              TextSpan(text: ' Kars!', style: AppAppBar.titleTextStyle2),
+              TextSpan(text: 'Hallo ', style: AppAppBar.titleTextStyle1),
+              TextSpan(text: account?.login != null ? '${account!.login}!' : '!', style: AppAppBar.titleTextStyle2),
             ],
           ),
         ),
@@ -60,16 +92,11 @@ class _ProfilePageState extends State<ProfilePage> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
-              children: const [
-                DataInputField(hint: 'Naam', icon: Icons.person_outline),
+              children: [
+                DataInputField(hint: 'Naam', icon: Icons.person_outline, controller: _loginController),
                 SizedBox(height: 12),
-                DataInputField(hint: 'E-mailadres', icon: Icons.email_outlined),
+                DataInputField(hint: 'E-mailadres', icon: Icons.email_outlined, controller: _emailController),
                 SizedBox(height: 12),
-                DataInputField(
-                  hint: 'Wachtwoord',
-                  icon: Icons.lock_outline,
-                  obscureText: true,
-                ),
               ],
             ),
           ),
