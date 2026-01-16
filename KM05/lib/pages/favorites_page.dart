@@ -1,7 +1,10 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/car_card.dart';
+import 'package:carsmeelien/models/car.dart';
+import 'package:carsmeelien/services/resource/cars.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -11,30 +14,20 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  // Nep data
-  final List<Map<String, dynamic>> favoriteCars = [
-    {
-      'model': 'Tesla Model 3',
-      'location': 'Amsterdam',
-      'status': 'Beschikbaar',
-      'priceCents': 50,
-      'imageUrl': 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop',
-    },
-    {
-      'model': 'BMW i3',
-      'location': 'Rotterdam',
-      'status': 'Beschikbaar',
-      'priceCents': 45,
-      'imageUrl': 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop',
-    },
-    {
-      'model': 'Audi A1',
-      'location': 'Utrecht',
-      'status': 'Bezet',
-      'priceCents': 55,
-      'imageUrl': 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&h=300&fit=crop',
-    },
-  ];
+  late Future<List<Car>> _carsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _carsFuture = getAvailableCars();
+  }
+
+  List<Car> _getRandomCars(List<Car> cars, int count) {
+    if (cars.length <= count) return cars;
+    final random = Random();
+    final shuffled = List<Car>.from(cars)..shuffle(random);
+    return shuffled.take(count).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,27 +44,47 @@ class _FavoritesPageState extends State<FavoritesPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: favoriteCars.isEmpty
-            ? const Center(
+        child: FutureBuilder<List<Car>>(
+          future: _carsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Fout bij laden: ${snapshot.error}',
+                  style: AppTextStyles.sectionHeader,
+                ),
+              );
+            }
+
+            final allCars = snapshot.data ?? [];
+            final favoriteCars = _getRandomCars(allCars, 3);
+
+            if (favoriteCars.isEmpty) {
+              return const Center(
                 child: Text(
                   'Geen favorieten gevonden',
                   style: TextStyle(fontSize: 16),
                 ),
-              )
-            : ListView.separated(
-                itemCount: favoriteCars.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final car = favoriteCars[index];
-                  return CarCard(
-                    brand: car['brand'],
-                    model: car['model']!,
-                    picture: car['picture'],
-                    height: 100,
-                    imageWidth: 100,
-                  );
-                },
-              ),
+              );
+            }
+
+            return ListView.separated(
+              itemCount: favoriteCars.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                return CarCard(
+                  car: favoriteCars[index],
+                  height: 100,
+                  imageWidth: 100,
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

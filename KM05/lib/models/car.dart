@@ -48,11 +48,13 @@ class Car {
     final repairsJson = json['repairs'] as List<dynamic>?;
     final rentalsJson = json['rentals'] as List<dynamic>?;
 
+    String picture = (json['picture'] as String?) ?? '';
+
     return Car(
       id: (json['id'] as num?)?.toInt() ?? 0,
       brand: json['brand'] as String,
       model: json['model'] as String,
-      picture: json['picture'] as String,
+      picture: picture,
       fuel: json['fuel'] as String,
       options: json['options'] as String,
       licensePlate: json['licensePlate'] as String,

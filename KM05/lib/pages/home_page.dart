@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/pages/login_page.dart';
 import 'package:carsmeelien/services/auth/token.dart';
@@ -20,27 +21,6 @@ class _HomePageState extends State<HomePage> {
   bool _isLoading = true;
 
   late Future<List<Car>> _carsFuture;
-  // Nep data
-  final List<Map<String, dynamic>> favorites = [
-    {
-      'brand': 'Tesla',
-      'model': 'Tesla Model 3',
-      'location': 'Amsterdam',
-      'status': 'Beschikbaar',
-      'priceCents': 50,
-      'imageUrl':
-          'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop',
-    },
-    {
-      'brand': 'BMW',
-      'model': 'BMW i3',
-      'location': 'Rotterdam',
-      'status': 'Beschikbaar',
-      'priceCents': 45,
-      'imageUrl':
-          'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop',
-    },
-  ];
 
   @override
   void initState() {
@@ -63,6 +43,13 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     }
+  }
+
+  List<Car> _getRandomCars(List<Car> cars, int count) {
+    if (cars.length <= count) return cars;
+    final random = Random();
+    final shuffled = List<Car>.from(cars)..shuffle(random);
+    return shuffled.take(count).toList();
   }
 
   @override
@@ -111,18 +98,35 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
             SizedBox(
               height: 120,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: favorites.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (context, index) {
-                  final fav = favorites[index];
-                  return CarCard(
-                    brand: fav['brand'],
-                    model: fav['model']!,
-                    picture: fav['imageUrl'],
-                    width: 220,
-                    imageWidth: 80,
+              child: FutureBuilder<List<Car>>(
+                future: _carsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final allCars = snapshot.data!;
+                  final favoriteCars = _getRandomCars(allCars, 3);
+
+                  if (favoriteCars.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: favoriteCars.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 12),
+                    itemBuilder: (context, index) {
+                      return CarCard(
+                        car: favoriteCars[index],
+                        width: 220,
+                        imageWidth: 80,
+                      );
+                    },
                   );
                 },
               ),
@@ -160,10 +164,7 @@ class _HomePageState extends State<HomePage> {
                       final car = cars[index];
 
                       return CarCard(
-                        brand: car.brand,
-                        model: car.model,
-                        licensePlate: car.licensePlate,
-                        picture: car.picture,
+                        car: car,
                         height: 100,
                         imageWidth: 100,
                       );
