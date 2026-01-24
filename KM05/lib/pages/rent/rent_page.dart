@@ -77,7 +77,7 @@ class _RentPageState extends State<RentPage> {
                       final rental = rentals[index];
 
                       return RentalCard(
-                        car: rental.car!,
+                        rental: rental,
                         height: 100,
                         imageWidth: 100,
                       );

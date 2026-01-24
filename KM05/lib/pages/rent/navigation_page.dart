@@ -1,8 +1,9 @@
+import 'package:carsmeelien/models/rental.dart';
+import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -10,9 +11,9 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:carsmeelien/config/api_keys.dart';
 
 class NavigationPage extends StatefulWidget {
-  final Car? car;
+  final Rental? rental;
 
-  const NavigationPage({super.key, this.car});
+  const NavigationPage({super.key, this.rental});
 
   @override
   State<NavigationPage> createState() => _NavigationPageState();
@@ -26,20 +27,51 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   void initState() {
     super.initState();
+    updateRentalState(widget.rental!.id, "PICKUP");
     _getUserLocation();
   }
 
   Future<void> _getUserLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // 1. Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled, don't continue
+      return Future.error('Location services are disabled.');
+    }
+
+    // 2. Check current permission status
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      // 3. THIS triggers the popup
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // User denied permissions
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are permanently denied, handle appropriately
+      return Future.error('Location permissions are permanently denied.');
+    }
+
     Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+      desiredAccuracy: LocationAccuracy.high,
+    );
 
     setState(() {
       _userLocation = LatLng(position.latitude, position.longitude);
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (_userLocation != null && widget.car != null) {
-        final carLatLng = LatLng(widget.car!.latitude, widget.car!.longitude);
+      if (_userLocation != null && widget.rental?.car != null) {
+        final carLatLng = LatLng(
+          widget.rental!.car!.latitude,
+          widget.rental!.car!.longitude,
+        );
         final center = LatLng(
           (_userLocation!.latitude + carLatLng.latitude) / 2,
           (_userLocation!.longitude + carLatLng.longitude) / 2,
@@ -54,15 +86,15 @@ class _NavigationPageState extends State<NavigationPage> {
     });
   }
 
-
   Future<List<LatLng>> fetchRoute(LatLng start, LatLng end) async {
-    final url =
-        Uri.parse('https://api.openrouteservice.org/v2/directions/foot-walking');
+    final url = Uri.parse(
+      'https://api.openrouteservice.org/v2/directions/foot-walking',
+    );
     final body = jsonEncode({
       "coordinates": [
         [start.longitude, start.latitude],
         [end.longitude, end.latitude],
-      ]
+      ],
     });
 
     final response = await http.post(
@@ -95,8 +127,8 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final carLatLng = widget.car != null
-        ? LatLng(widget.car!.latitude, widget.car!.longitude)
+    final carLatLng = widget.rental!.car != null
+        ? LatLng(widget.rental!.car!.latitude, widget.rental!.car!.longitude)
         : null;
 
     return Scaffold(

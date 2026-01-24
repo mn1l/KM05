@@ -31,6 +31,33 @@ Future<List<Rental>> getRentalsByState(String state) async {
   return allRentals.where((rental) => rental.state == state).toList();
 }
 
+Future<Rental> updateRentalState(int rentalId, String state) async {
+  TokenService tokenService = TokenService();
+
+  final response = await http.patch(
+    Uri.parse('$apiUrl/$rentalId'),
+    headers: {
+      'Authorization': 'Bearer ${await tokenService.getToken()}',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'id': rentalId, // Most APIs need the ID in the body for a PATCH too
+      'state': state,
+    }),
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception('Failed to get rentals: ${response.statusCode}');
+  }
+
+  final Map<String, dynamic> decoded =
+      jsonDecode(response.body) as Map<String, dynamic>;
+
+  print(decoded);
+
+  return Rental.fromJson(decoded);
+}
+
 Future<Rental> postRental(Rental rental) async {
   TokenService tokenService = TokenService();
 

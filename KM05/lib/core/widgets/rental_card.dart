@@ -1,20 +1,19 @@
 import 'dart:convert';
+import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/pages/rent/navigation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
-import 'package:carsmeelien/models/car.dart';
-import 'package:carsmeelien/pages/rent/info_page.dart';
 
 // TODO NEEDS REWORK TO FIT RENTAL CLASS
 class RentalCard extends StatelessWidget {
-  final Car car;
+  final Rental rental;
   final double? width;
   final double? height;
   final double imageWidth;
 
   const RentalCard({
     super.key,
-    required this.car,
+    required this.rental,
     this.width,
     this.height,
     this.imageWidth = 100,
@@ -36,7 +35,7 @@ class RentalCard extends StatelessWidget {
               topLeft: Radius.circular(16),
               bottomLeft: Radius.circular(16),
             ),
-            child: car.picture.isNotEmpty
+            child: rental.car!.picture.isNotEmpty
                 ? _buildImageWidget()
                 : Container(
                     width: imageWidth,
@@ -53,7 +52,7 @@ class RentalCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${car.brand} ${car.model} ${car.modelYear}',
+                    '${rental.car!.brand} ${rental.car!.model} ${rental.car!.modelYear}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -69,7 +68,7 @@ class RentalCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${car.price} per dag',
+                        '${rental.car!.price} per dag',
                         style: TextStyle(
                           color: AppColors.darkBlue,
                           fontWeight: FontWeight.w500,
@@ -87,7 +86,7 @@ class RentalCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Max ${car.nrOfSeats} personen',
+                        'Max ${rental.car!.nrOfSeats} personen',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
@@ -112,7 +111,7 @@ class RentalCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NavigationPage(car: car),
+                builder: (context) => NavigationPage(rental: rental),
               ),
             );
           },
@@ -127,7 +126,7 @@ class RentalCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => NavigationPage(car: car),
+            builder: (context) => NavigationPage(rental: rental),
           ),
         );
       },
@@ -136,7 +135,7 @@ class RentalCard extends StatelessWidget {
   }
 
   Widget _buildImageWidget() {
-    final picture = car.picture;
+    final picture = rental.car!.picture;
        try {
       final imageBytes = base64Decode(picture);
 
