@@ -13,8 +13,8 @@ class Rental {
 
   final List<Inspection>
   inspections; // nullable in JSON, but we default to empty
-  final Customer customer;
-  final Car car;
+  final Customer? customer;
+  final Car? car;
 
   Rental({
     required this.id,
@@ -25,8 +25,8 @@ class Rental {
     required this.toDate,
     required this.state,
     required this.inspections,
-    required this.customer,
-    required this.car,
+    this.customer,
+    this.car,
   });
 
   factory Rental.fromJson(Map<String, dynamic> json) {
@@ -40,13 +40,15 @@ class Rental {
       fromDate: json['fromDate'] as String? ?? '',
       toDate: json['toDate'] as String? ?? '',
       state: json['state'] as String? ?? '',
-      inspections:
-          inspectionsJson
-              ?.map((e) => Inspection.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [], // default empty list if null
-      customer: Customer.fromJson(json['customer'] as Map<String, dynamic>),
-      car: Car.fromJson(json['car'] as Map<String, dynamic>),
+      inspections: inspectionsJson != null
+              ? inspectionsJson.map((e) => Inspection.fromJson(e as Map<String, dynamic>)).toList()
+              : [],
+      customer: json['customer'] != null
+              ? Customer.fromJson(json['customer'] as Map<String, dynamic>)
+              : null,
+      car: json['car'] != null
+              ? Car.fromJson(json['car'] as Map<String, dynamic>)
+              : null,
     );
   }
 
@@ -60,8 +62,8 @@ class Rental {
       'toDate': toDate,
       'state': state,
       'inspections': inspections.map((e) => e.toJson()).toList(),
-      'customer': customer.toJson(),
-      'car': car.toJson(),
+      'customer': customer?.toJson(),
+      'car': car?.toJson(),
     };
   }
 }

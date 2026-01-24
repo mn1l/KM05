@@ -41,8 +41,22 @@ Future<Customer> getMe() async {
     headers: {'Authorization': 'Bearer ${await tokenService.getToken()}'},
   );
 
+  print("here");
+
+  if (response.statusCode != 200) {
+    throw Exception("Error finding customer");
+  }
+
   final Map<String, dynamic> decoded =
       jsonDecode(response.body) as Map<String, dynamic>;
 
-  return Customer.fromJson(decoded);
+  print(decoded);
+
+  print("here");
+
+  final customer = Customer.fromJson(decoded);
+
+  print("here2");
+
+  return customer;
 }

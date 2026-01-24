@@ -77,7 +77,7 @@ class _RentHistoryPageState extends State<RentHistoryPage> {
               itemBuilder: (context, index) {
                 final rental = completedRentals[index];
                 return CarCard(
-                  car: rental.car,
+                  car: rental.car!,
                   height: 100,
                   imageWidth: 100,
                 );

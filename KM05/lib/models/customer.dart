@@ -34,10 +34,9 @@ class Customer {
           ? Account.fromJson(json['systemUser'] as Map<String, dynamic>)
           : null,
 
-      rentals: rentalsJson
-              ?.map((e) => Rental.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
+      rentals: rentalsJson != null
+              ? rentalsJson.map((e) => Rental.fromJson(e as Map<String, dynamic>)).toList()
+              : [],
     );
   }
 
