@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:carsmeelien/models/customer.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/services/auth/token.dart';
 import 'package:http/http.dart' as http;
@@ -27,4 +28,32 @@ Future<List<Rental>> getRentals() async {
 Future<List<Rental>> getRentalsByState(String state) async {
   final allRentals = await getRentals();
   return allRentals.where((rental) => rental.state == state).toList();
+}
+
+Future<Rental> postRental(Rental rental) async {
+  TokenService tokenService = TokenService();
+
+  print(jsonEncode(rental));
+
+  final Map<String, dynamic> data = rental.toJson();
+  data.remove('id');
+
+  final response = await http.post(
+    Uri.parse(apiUrl),
+    headers: {
+      "Authorization": 'Bearer ${await tokenService.getToken()}',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode(data),
+  );
+
+  if (response.statusCode != 200) {
+    print(response.body);
+    throw Exception('Failed to get rentals: ${response.statusCode}');
+  }
+
+  final Map<String, dynamic> decoded =
+      jsonDecode(response.body) as Map<String, dynamic>;
+
+  return Rental.fromJson(decoded);
 }

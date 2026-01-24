@@ -35,6 +35,11 @@ Future<List<Car>> getCars() async {
     headers: {"Authorization": 'Bearer ${await tokenService.getToken()}'},
   );
 
+  if (response.statusCode == 401) {
+    tokenService
+        .clearToken(); // Means your token is invalid and should be reset.
+  }
+
   if (response.statusCode != 200) {
     throw Exception('Failed to get cars: ${response.statusCode}');
   }
@@ -64,11 +69,14 @@ Future<List<Car>> getAvailableCars() async {
 }
 
 Future<Car> postCar(Car car) async {
+  TokenService tokenService = TokenService();
+
   final response = await http.post(
     Uri.parse(apiUrl),
     headers: <String, String>{
       'Content-Type': 'application/json',
-    }, // Moet nog access token bij vgm
+      'Authorization': 'Bearer ${await tokenService.getToken()}',
+    },
     body: car.toJson(),
   );
 
