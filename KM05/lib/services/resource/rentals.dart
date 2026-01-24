@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:carsmeelien/models/customer.dart';
+import 'package:carsmeelien/models/inspection.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/services/auth/token.dart';
 import 'package:carsmeelien/services/resource/customer.dart';
@@ -46,14 +47,51 @@ Future<Rental> updateRentalState(int rentalId, String state) async {
     }),
   );
 
+  if (response.statusCode > 201) {
+    throw Exception('Failed to update rental state: ${response.statusCode}');
+  }
+
+  print("changed state: ${state}");
+
+  final Map<String, dynamic> decoded =
+      jsonDecode(response.body) as Map<String, dynamic>;
+
+  return Rental.fromJson(decoded);
+}
+
+Future<Rental> addInspectionToRental(
+  int rentalId,
+  Inspection newInspection,
+) async {
+  TokenService tokenService = TokenService();
+
+  final Rental rental = await getRentalById(rentalId);
+
+  List<Inspection> updatedInspections = [
+    ...(rental.inspections ?? []),
+    newInspection,
+  ];
+
+  print(jsonEncode(updatedInspections));
+
+  final response = await http.patch(
+    Uri.parse('$apiUrl/$rentalId'),
+    headers: {
+      'Authorization': 'Bearer ${await tokenService.getToken()}',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'id': rentalId, // Most APIs need the ID in the body for a PATCH too
+      'inspections': updatedInspections,
+    }),
+  );
+
   if (response.statusCode != 200) {
     throw Exception('Failed to get rentals: ${response.statusCode}');
   }
 
   final Map<String, dynamic> decoded =
       jsonDecode(response.body) as Map<String, dynamic>;
-
-  print(decoded);
 
   return Rental.fromJson(decoded);
 }
@@ -73,7 +111,7 @@ Future<Rental> postRental(Rental rental) async {
     body: jsonEncode(data),
   );
 
-  if (response.statusCode != 200) {
+  if (response.statusCode > 201) {
     throw Exception('Failed to get rentals: ${response.statusCode}');
   }
 

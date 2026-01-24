@@ -1,4 +1,5 @@
 import 'package:carsmeelien/models/rental.dart';
+import 'package:carsmeelien/pages/rent/ongoing_page.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -11,9 +12,9 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:carsmeelien/config/api_keys.dart';
 
 class NavigationPage extends StatefulWidget {
-  final Rental? rental;
+  final Rental rental;
 
-  const NavigationPage({super.key, this.rental});
+  const NavigationPage({super.key, required this.rental});
 
   @override
   State<NavigationPage> createState() => _NavigationPageState();
@@ -27,7 +28,7 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   void initState() {
     super.initState();
-    updateRentalState(widget.rental!.id, "PICKUP");
+    updateRentalState(widget.rental.id, "PICKUP");
     _getUserLocation();
   }
 
@@ -67,7 +68,7 @@ class _NavigationPageState extends State<NavigationPage> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (_userLocation != null && widget.rental?.car != null) {
+      if (_userLocation != null && widget.rental.car != null) {
         final carLatLng = LatLng(
           widget.rental!.car!.latitude,
           widget.rental!.car!.longitude,
@@ -128,58 +129,93 @@ class _NavigationPageState extends State<NavigationPage> {
   @override
   Widget build(BuildContext context) {
     final carLatLng = widget.rental!.car != null
-        ? LatLng(widget.rental!.car!.latitude, widget.rental!.car!.longitude)
+        ? LatLng(widget.rental!.car!.latitude, widget.rental.car!.longitude)
         : null;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Navigation')),
+      // We use a Stack to place the button on top of the map
       body: _userLocation == null || carLatLng == null
           ? const Center(child: CircularProgressIndicator())
-          : FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: _userLocation!,
-                initialZoom: 17.0,
-              ),
+          : Stack(
               children: [
-                TileLayer(
-                  urlTemplate:
-                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  userAgentPackageName: 'com.example.carsmeelien',
-                ),
-                if (_routePoints.isNotEmpty)
-                  PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: _routePoints,
-                        color: AppColors.primary,
-                        strokeWidth: 4,
-                      ),
-                    ],
+                // Layer 0: The Map
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    initialCenter: _userLocation!,
+                    initialZoom: 17.0,
                   ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: _userLocation!,
-                      width: 50,
-                      height: 50,
-                      child: const Icon(
-                        Icons.my_location,
-                        color: AppColors.darkBlue,
-                        size: 40,
-                      ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      userAgentPackageName: 'com.example.carsmeelien',
                     ),
-                    Marker(
-                      point: carLatLng,
-                      width: 50,
-                      height: 50,
-                      child: const Icon(
-                        Icons.directions_car,
-                        color: AppColors.darkYellow,
-                        size: 40,
+                    if (_routePoints.isNotEmpty)
+                      PolylineLayer(
+                        polylines: [
+                          Polyline(
+                            points: _routePoints,
+                            color: AppColors.primary,
+                            strokeWidth: 4,
+                          ),
+                        ],
                       ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: _userLocation!,
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                            Icons.my_location,
+                            color: AppColors.darkBlue,
+                            size: 40,
+                          ),
+                        ),
+                        Marker(
+                          point: carLatLng!, // Used ! because we checked null above
+                          width: 50,
+                          height: 50,
+                          child: const Icon(
+                            Icons.directions_car,
+                            color: AppColors.darkYellow,
+                            size: 40,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
+                ),
+
+                // Layer 1: The Overlapping Button
+                Positioned(
+                  bottom: 20,
+                  left: 20,
+                  right: 20,
+                  child: SafeArea(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 8, // Adds a shadow to stand out from the map
+                      ),
+                      onPressed: () async {
+                        final rental = await updateRentalState(widget.rental.id, "ACTIVE");
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => OngoingPage(rental: rental)),
+                        );
+                      },
+                      child: const Text(
+                        'Aangekomen',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

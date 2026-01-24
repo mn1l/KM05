@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:carsmeelien/models/rental.dart';
+import 'package:carsmeelien/pages/rent/finish_page.dart';
 import 'package:carsmeelien/pages/rent/navigation_page.dart';
+import 'package:carsmeelien/pages/rent/ongoing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 
@@ -18,6 +20,23 @@ class RentalCard extends StatelessWidget {
     this.height,
     this.imageWidth = 100,
   });
+
+  void handleNavigate(BuildContext context) {
+    Widget? page;
+
+    page = switch (rental.state) {
+      "RESERVED" || "PICKUP" => NavigationPage(rental: rental),
+      "ACTIVE" => OngoingPage(rental: rental),
+      "ENDING" => FinishPage(rental: rental),
+      _ => null, // Handle unknown states
+    };
+
+    print(rental.state);
+
+    if (page != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => page!));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +80,7 @@ class RentalCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
-                        Icons.euro,
-                        size: 16,
-                        color: AppColors.darkBlue,
-                      ),
+                      Icon(Icons.euro, size: 16, color: AppColors.darkBlue),
                       const SizedBox(width: 4),
                       Text(
                         '${rental.car!.price} per dag',
@@ -79,19 +94,15 @@ class RentalCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
-                        Icons.people,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
+                      Icon(Icons.people, size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
                         'Max ${rental.car!.nrOfSeats} personen',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
+                      Text(
+                        rental.state == "RETURNED" ? ' Teruggebracht' : ''
+                      )
                     ],
                   ),
                 ],
@@ -108,12 +119,7 @@ class RentalCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NavigationPage(rental: rental),
-              ),
-            );
+            handleNavigate(context);
           },
           child: card,
         ),
@@ -123,12 +129,7 @@ class RentalCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => NavigationPage(rental: rental),
-          ),
-        );
+        handleNavigate(context);
       },
       child: card,
     );
@@ -136,7 +137,7 @@ class RentalCard extends StatelessWidget {
 
   Widget _buildImageWidget() {
     final picture = rental.car!.picture;
-       try {
+    try {
       final imageBytes = base64Decode(picture);
 
       return Image.memory(
@@ -150,10 +151,7 @@ class RentalCard extends StatelessWidget {
             width: imageWidth,
             height: height ?? double.infinity,
             color: AppColors.secondary,
-            child: const Icon(
-              Icons.image_not_supported,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.image_not_supported, color: Colors.white),
           );
         },
       );
@@ -163,10 +161,7 @@ class RentalCard extends StatelessWidget {
         width: imageWidth,
         height: height ?? double.infinity,
         color: AppColors.secondary,
-        child: const Icon(
-          Icons.image_not_supported,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.image_not_supported, color: Colors.white),
       );
     }
   }

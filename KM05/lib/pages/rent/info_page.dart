@@ -52,6 +52,7 @@ class _InfoPageState extends State<InfoPage> {
 
   void _handleRental() {
     createRental(_selectedDateRange, widget.car);
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const RentPage()),
     );
@@ -248,5 +249,6 @@ void createRental(DateTimeRange dateRange, Car car) async {
     car: car,
   );
 
-  await postRental(rental);
+  final savedRental = await postRental(rental);
+  await updateRentalState(savedRental.id, "RESERVED");
 }

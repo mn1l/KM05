@@ -137,7 +137,7 @@ class CarCard extends StatelessWidget {
     final picture = car.picture;
        try {
       final imageBytes = base64Decode(picture);
-      
+
       return Image.memory(
         imageBytes,
         width: imageWidth,
