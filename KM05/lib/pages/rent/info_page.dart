@@ -1,8 +1,5 @@
-import 'package:carsmeelien/models/account.dart';
-import 'package:carsmeelien/models/customer.dart';
-import 'package:carsmeelien/models/inspection.dart';
 import 'package:carsmeelien/models/rental.dart';
-import 'package:carsmeelien/pages/rent/rent_page.dart';
+import 'package:carsmeelien/pages/main_page.dart';
 import 'package:carsmeelien/services/auth/account.dart';
 import 'package:carsmeelien/services/resource/customer.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
@@ -54,7 +51,7 @@ class _InfoPageState extends State<InfoPage> {
     createRental(_selectedDateRange, widget.car);
 
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const RentPage()),
+      MaterialPageRoute(builder: (context) => const MainPage()),
     );
   }
 

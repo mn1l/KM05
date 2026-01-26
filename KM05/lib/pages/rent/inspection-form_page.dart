@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:carsmeelien/models/rental.dart';
-import 'package:carsmeelien/pages/home_page.dart';
+import 'package:carsmeelien/pages/main_page.dart';
+import 'package:carsmeelien/services/resource/inspection.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/models/inspection.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 
 class InspectionFormPage extends StatefulWidget {
   final Rental rental;
@@ -59,14 +59,14 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
         completed: DateTime.now().toUtc().toIso8601String(),
       );
 
-      await addInspectionToRental(widget.rental.id, newInspection);
+      await postInspection(newInspection);
 
       if (!mounted) return;
 
       await updateRentalState(widget.rental.id, "RETURNED");
 
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const MainPage()),
         (route) =>
             false, // This removes all previous screens (Navigation, Form, etc.)
       );

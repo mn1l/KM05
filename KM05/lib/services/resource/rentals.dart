@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:carsmeelien/models/customer.dart';
 import 'package:carsmeelien/models/inspection.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/services/auth/token.dart';
@@ -16,7 +15,7 @@ Future<List<Rental>> getRentals() async {
     headers: {"Authorization": 'Bearer ${await tokenService.getToken()}'},
   );
 
-  if (response.statusCode != 200) {
+  if (response.statusCode < 200 || response.statusCode > 300) {
     throw Exception('Failed to get rentals: ${response.statusCode}');
   }
 
@@ -47,7 +46,7 @@ Future<Rental> updateRentalState(int rentalId, String state) async {
     }),
   );
 
-  if (response.statusCode > 201) {
+  if (response.statusCode < 200 || response.statusCode > 300) {
     throw Exception('Failed to update rental state: ${response.statusCode}');
   }
 
@@ -86,7 +85,7 @@ Future<Rental> addInspectionToRental(
     }),
   );
 
-  if (response.statusCode != 200) {
+  if (response.statusCode < 200 || response.statusCode > 300) {
     throw Exception('Failed to get rentals: ${response.statusCode}');
   }
 
@@ -111,7 +110,7 @@ Future<Rental> postRental(Rental rental) async {
     body: jsonEncode(data),
   );
 
-  if (response.statusCode > 201) {
+  if (response.statusCode < 200 || response.statusCode > 300) {
     throw Exception('Failed to get rentals: ${response.statusCode}');
   }
 
@@ -149,7 +148,7 @@ Future<Rental> getRentalById(int id) async {
     headers: {'Authorization': 'Bearer ${await tokenService.getToken()}'},
   );
 
-  if (response.statusCode != 200) {
+  if (response.statusCode < 200 || response.statusCode > 300) {
     throw Exception("Failed to get rental: ${response.statusCode}");
   }
 

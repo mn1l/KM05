@@ -1,8 +1,7 @@
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/models/rental.dart';
-import 'package:carsmeelien/pages/rent/finish_page.dart';
-import 'package:carsmeelien/services/resource/rentals.dart';
+import 'package:carsmeelien/pages/rent/inspection-form_page.dart';
 import 'package:flutter/material.dart';
 
 class OngoingPage extends StatefulWidget {
@@ -51,7 +50,7 @@ class _OngoingPageState extends State<OngoingPage> {
                   ),
                   onPressed: () async {
                     Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => FinishPage(rental: widget.rental)),
+                      MaterialPageRoute(builder: (context) => InspectionFormPage(rental: widget.rental)),
                     );
                   },
                   child: const Text(

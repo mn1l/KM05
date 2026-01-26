@@ -41,10 +41,7 @@ class _MainPageState extends State<MainPage> {
             icon: Icon(Icons.local_shipping),
             label: 'Huurproces',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profiel',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profiel'),
         ],
       ),
     );

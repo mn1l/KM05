@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/data_input_field.dart';
 import 'package:carsmeelien/pages/login_page.dart';
-import 'package:carsmeelien/pages/main_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

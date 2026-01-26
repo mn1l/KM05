@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:carsmeelien/models/rental.dart';
-import 'package:carsmeelien/pages/rent/finish_page.dart';
 import 'package:carsmeelien/pages/rent/navigation_page.dart';
 import 'package:carsmeelien/pages/rent/ongoing_page.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +26,6 @@ class RentalCard extends StatelessWidget {
     page = switch (rental.state) {
       "RESERVED" || "PICKUP" => NavigationPage(rental: rental),
       "ACTIVE" => OngoingPage(rental: rental),
-      "ENDING" => FinishPage(rental: rental),
       _ => null, // Handle unknown states
     };
 
