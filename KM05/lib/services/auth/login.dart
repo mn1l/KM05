@@ -1,10 +1,13 @@
 import 'dart:convert';
 
 import 'package:carsmeelien/services/auth/token.dart';
+import 'package:carsmeelien/services/service.dart' as service;
 import 'package:http/http.dart' as http;
 
-const apiUrl = 'http://192.168.178.42:8080/api/authenticate';
+final apiUrl = '${service.apiBaseUrl}/api/authenticate';
 
+// Could make this use service.post(),
+// however service.post always includes the authorization token in its requests which is unavailable at this point.
 Future<void> login(String username, String password) async {
   final response = await http.post(
     Uri.parse(apiUrl),

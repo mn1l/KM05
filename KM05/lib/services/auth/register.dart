@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:carsmeelien/services/service.dart' as service;
 import 'package:http/http.dart' as http;
 
-const apiUrl = 'http://192.168.178.42:8080/api/AM/register';
+final apiUrl = '${service.apiBaseUrl}/api/AM/register';
 
+// Unique function as register endpoint doesn't return any object, so service.post is unusable
 Future<void> register(String login, String firstName, String lastName, String email, String password) async {
   final response = await http.post(
     Uri.parse(apiUrl),

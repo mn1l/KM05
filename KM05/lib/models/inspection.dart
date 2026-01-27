@@ -34,7 +34,6 @@ class Inspection {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'code': code,
       'odometer': odometer,
       'result': result,

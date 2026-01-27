@@ -1,32 +1,14 @@
 import 'dart:convert';
 
 import 'package:carsmeelien/models/inspection.dart';
-import 'package:carsmeelien/services/auth/token.dart';
-import 'package:http/http.dart' as http;
+import 'package:carsmeelien/services/service.dart' as service;
 
-const apiUrl = 'http://192.168.178.42:8080/api/inspections';
+final apiUrl = '${service.apiBaseUrl}/api/inspections';
 
 Future<Inspection> postInspection(Inspection inspection) async {
-  TokenService tokenService = TokenService();
-
-  final Map<String, dynamic> data = inspection.toJson();
-  data.remove('id');
-
-  final response = await http.post(
-    Uri.parse(apiUrl),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await tokenService.getToken()}',
-    },
-    body: jsonEncode(data),
+  return await service.post<Inspection>(
+    apiUrl,
+    Inspection.fromJson,
+    jsonEncode(inspection.toJson()),
   );
-
-  if (response.statusCode < 200 || response.statusCode > 300) {
-    throw Exception('Failed to post inspection: ${response.statusCode}');
-  }
-
-  final Map<String, dynamic> decoded =
-      jsonDecode(response.body) as Map<String, dynamic>;
-
-  return Inspection.fromJson(decoded);
 }

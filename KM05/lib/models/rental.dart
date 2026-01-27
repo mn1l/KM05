@@ -54,7 +54,6 @@ class Rental {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'code': code,
       'longitude': longitude,
       'latitude': latitude,
