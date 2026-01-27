@@ -42,11 +42,7 @@ Future<Rental> updateRentalState(int rentalId, String state) async {
   );
 }
 
-Future<Rental> updateRentalLocation(
-  int rentalId,
-  double longitude,
-  double latitude,
-) async {
+Future<Rental> updateRentalLocation(int rentalId, double longitude, double latitude) async {
   return await service.patch<Rental>(
     '$apiUrl/$rentalId',
     Rental.fromJson,
