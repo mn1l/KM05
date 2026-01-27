@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/pages/main_page.dart';
+import 'package:carsmeelien/services/resource/cars.dart';
 import 'package:carsmeelien/services/resource/inspection.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/models/inspection.dart';
 import 'package:carsmeelien/core/theme.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 
 class InspectionFormPage extends StatefulWidget {
@@ -45,9 +47,33 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
     }
   }
 
+  Future<Position?> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Locatievoorzieningen zijn uitgeschakeld.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Locatietoestemming is geweigerd.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Locatietoestemming is permanent geweigerd.');
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // 1. Create the Inspection object
       final newInspection = Inspection(
         id: 0,
         code: '',
@@ -59,6 +85,31 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
         completed: DateTime.now().toUtc().toIso8601String(),
       );
 
+      try {
+        Position? position = await _determinePosition();
+        if (position != null) {
+          double _longitude = position.longitude;
+          double _latitude = position.latitude;
+
+          await updateRentalLocation(widget.rental.id, _longitude, _latitude);
+          await updateCarLocation(widget.rental.car!.id, _longitude, _latitude);
+        }
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+            action: SnackBarAction(
+              label: 'Instellingen',
+              textColor: Colors.white,
+              onPressed: () => Geolocator.openAppSettings(),
+            ),
+          ),
+        );
+        return;
+      }
+
       await postInspection(newInspection);
 
       if (!mounted) return;
@@ -67,8 +118,7 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
 
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const MainPage()),
-        (route) =>
-            false, // This removes all previous screens (Navigation, Form, etc.)
+        (route) => false,
       );
 
       ScaffoldMessenger.of(
@@ -113,7 +163,6 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
               ),
               const SizedBox(height: 20),
 
-              // Description Field
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -163,7 +212,6 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
               ),
 
               const SizedBox(height: 30),
-              // Submit Button
               SizedBox(
                 width: double.infinity,
                 height: 50,

@@ -31,6 +31,44 @@ Future<List<Rental>> getRentalsByState(String state) async {
   return allRentals.where((rental) => rental.state == state).toList();
 }
 
+Future<List<Rental>> getMyRentals() async {
+  // Omdat bij customer.rentals geen data is over de auto
+  TokenService tokenService = TokenService();
+  List<Rental> result = [];
+
+  print('here');
+  final customer = await getMe();
+
+  print(jsonEncode(customer));
+
+  result = await Future.wait(
+    customer.rentals.map((rental) async {
+      return await getRentalById(rental.id);
+    }),
+  );
+
+  return result;
+}
+
+Future<Rental> getRentalById(int id) async {
+  TokenService tokenService = TokenService();
+  print('here not');
+
+  final response = await http.get(
+    Uri.parse('$apiUrl/$id'),
+    headers: {'Authorization': 'Bearer ${await tokenService.getToken()}'},
+  );
+
+  if (response.statusCode < 200 || response.statusCode > 300) {
+    throw Exception("Failed to get rental: ${response.statusCode}");
+  }
+
+  final Map<String, dynamic> decoded =
+      jsonDecode(response.body) as Map<String, dynamic>;
+
+  return Rental.fromJson(decoded);
+}
+
 Future<Rental> updateRentalState(int rentalId, String state) async {
   TokenService tokenService = TokenService();
 
@@ -56,6 +94,36 @@ Future<Rental> updateRentalState(int rentalId, String state) async {
       jsonDecode(response.body) as Map<String, dynamic>;
 
   return Rental.fromJson(decoded);
+}
+
+Future<Rental> updateRentalLocation(
+  int rentalId,
+  double longitude,
+  double latitude,
+) async {
+  TokenService tokenService = TokenService();
+
+  final response = await http.patch(
+    Uri.parse('$apiUrl/$rentalId'),
+    headers: {
+      'Authorization': 'Bearer ${await tokenService.getToken()}',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      'id': rentalId,
+      'longitude': longitude,
+      'latitude': latitude,
+    }),
+  );
+
+  if (response.statusCode < 200 || response.statusCode > 300) {
+    throw Exception('Failed to update rental location: ${response.statusCode}');
+  }
+
+  final Map<String, dynamic> decodedBody =
+      jsonDecode(response.body) as Map<String, dynamic>;
+
+  return Rental.fromJson(decodedBody);
 }
 
 Future<Rental> addInspectionToRental(
@@ -112,44 +180,6 @@ Future<Rental> postRental(Rental rental) async {
 
   if (response.statusCode < 200 || response.statusCode > 300) {
     throw Exception('Failed to get rentals: ${response.statusCode}');
-  }
-
-  final Map<String, dynamic> decoded =
-      jsonDecode(response.body) as Map<String, dynamic>;
-
-  return Rental.fromJson(decoded);
-}
-
-Future<List<Rental>> getMyRentals() async {
-  // Omdat bij customer.rentals geen data is over de auto
-  TokenService tokenService = TokenService();
-  List<Rental> result = [];
-
-  print('here');
-  final customer = await getMe();
-
-  print(jsonEncode(customer));
-
-  result = await Future.wait(
-    customer.rentals.map((rental) async {
-      return await getRentalById(rental.id);
-    }),
-  );
-
-  return result;
-}
-
-Future<Rental> getRentalById(int id) async {
-  TokenService tokenService = TokenService();
-  print('here not');
-
-  final response = await http.get(
-    Uri.parse('$apiUrl/$id'),
-    headers: {'Authorization': 'Bearer ${await tokenService.getToken()}'},
-  );
-
-  if (response.statusCode < 200 || response.statusCode > 300) {
-    throw Exception("Failed to get rental: ${response.statusCode}");
   }
 
   final Map<String, dynamic> decoded =

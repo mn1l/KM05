@@ -36,26 +36,20 @@ class _NavigationPageState extends State<NavigationPage> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // 1. Check if location services are enabled
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      // Location services are not enabled, don't continue
       return Future.error('Location services are disabled.');
     }
 
-    // 2. Check current permission status
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
-      // 3. THIS triggers the popup
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // User denied permissions
         return Future.error('Location permissions are denied');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are permanently denied, handle appropriately
       return Future.error('Location permissions are permanently denied.');
     }
 
@@ -70,8 +64,8 @@ class _NavigationPageState extends State<NavigationPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_userLocation != null && widget.rental.car != null) {
         final carLatLng = LatLng(
-          widget.rental!.car!.latitude,
-          widget.rental!.car!.longitude,
+          widget.rental.car!.latitude,
+          widget.rental.car!.longitude,
         );
         final center = LatLng(
           (_userLocation!.latitude + carLatLng.latitude) / 2,

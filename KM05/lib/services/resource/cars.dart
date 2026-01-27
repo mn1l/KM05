@@ -20,14 +20,6 @@ Future<Car> getCar(int id) async {
   return Car.fromJson(decoded);
 }
 
-Future<void> updateCar(int id, Car car) async {}
-
-Future<bool> deleteCar(int id) async {
-  return false;
-}
-
-Future<void> patchCar(int id, Car car) async {}
-
 Future<List<Car>> getCars() async {
   TokenService tokenService = TokenService();
   final response = await http.get(
@@ -66,6 +58,32 @@ Future<List<Car>> getAvailableCars() async {
   );
 
   return cars;
+}
+
+Future<bool> deleteCar(int id) async {
+  return false;
+}
+
+Future<Car> updateCarLocation(int id, double longitude, double latitude) async {
+  TokenService tokenService = TokenService();
+
+  final response = await http.patch(
+    Uri.parse('$apiUrl/$id'),
+    headers: {
+      'Authorization': 'Bearer ${await tokenService.getToken()}',
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({'id': id, 'longitude': longitude, 'latitude': latitude}),
+  );
+
+  if (response.statusCode < 200 || response.statusCode > 300) {
+    throw Exception('Failed to update car location: ${response.statusCode}');
+  }
+
+  final Map<String, dynamic> decoded =
+      jsonDecode(response.body) as Map<String, dynamic>;
+
+  return Car.fromJson(decoded);
 }
 
 Future<Car> postCar(Car car) async {

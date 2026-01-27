@@ -29,9 +29,13 @@ class RentalCard extends StatelessWidget {
       _ => null, // Handle unknown states
     };
 
-    print(rental.state);
+    DateTime startDate = DateTime.parse(rental.fromDate);
+    DateTime now = DateTime.now();
+    bool isToday = startDate.year == now.year &&
+                   startDate.month == now.month &&
+                   startDate.day == now.day;
 
-    if (page != null) {
+    if (page != null && isToday) { // TODO Add visuals in the UI: Make the card like greyed out if the rental is not yet due for today.
       Navigator.push(context, MaterialPageRoute(builder: (context) => page!));
     }
   }
@@ -98,9 +102,7 @@ class RentalCard extends StatelessWidget {
                         'Max ${rental.car!.nrOfSeats} personen',
                         style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
-                      Text(
-                        rental.state == "RETURNED" ? ' Teruggebracht' : ''
-                      )
+                      Text(rental.state == "RETURNED" ? ' Teruggebracht' : ''),
                     ],
                   ),
                 ],
