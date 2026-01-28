@@ -1,3 +1,4 @@
+import 'package:carsmeelien/core/utils/formatters.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/pages/main_page.dart';
 import 'package:carsmeelien/services/auth/account.dart';
@@ -104,7 +105,6 @@ class _InfoPageState extends State<InfoPage> {
 
             const SizedBox(height: 16),
 
-            // --- COMPACT DATE PICKER & PRICE CALCULATION ---
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -128,7 +128,7 @@ class _InfoPageState extends State<InfoPage> {
                           child: Text(
                             _selectedDateRange == null
                                 ? 'Kies data'
-                                : '${DateFormat('dd MMM').format(_selectedDateRange!.start)} - ${DateFormat('dd MMM').format(_selectedDateRange!.end)}',
+                                : '${AppFormatters.shortDate(_selectedDateRange!.start)} - ${AppFormatters.shortDate(_selectedDateRange!.end)}',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),

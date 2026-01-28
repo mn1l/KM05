@@ -69,8 +69,9 @@ class RentalCard extends StatelessWidget {
                       _buildInfoRow(Icons.people, '${rental.car?.nrOfSeats} personen'),
                       const SizedBox(height: 3),
                       _buildInfoRow(
-                        Icons.calendar_today, 
-                        '${AppFormatters.date(rental.fromDate)} - ${AppFormatters.date(rental.toDate)}'
+                        Icons.calendar_today,
+                        iconColor: AppColors.darkBlue,
+                        '${AppFormatters.date(rental.fromDate)} - ${AppFormatters.date(rental.toDate)}',
                       ),
                     ],
                   ),
@@ -104,15 +105,23 @@ class RentalCard extends StatelessWidget {
     return _wrapInInkWell(context, card, isActiveToday);
   }
 
-  Widget _buildInfoRow(IconData icon, String text) {
+  Widget _buildInfoRow(IconData icon, String text, {Color? iconColor}) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: Colors.grey[600]),
+        Icon(
+          icon, 
+          size: 16, 
+          color: iconColor ?? Colors.grey[600], 
+        ),
         const SizedBox(width: 4),
         Expanded(
           child: Text(
             text,
-            style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            style: TextStyle(
+              color: Colors.grey[600], 
+              fontSize: 12,
+              fontWeight: iconColor != null ? FontWeight.bold : FontWeight.normal,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
