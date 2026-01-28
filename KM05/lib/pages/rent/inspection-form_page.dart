@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/pages/main_page.dart';
+import 'package:carsmeelien/pages/rent/widgets/step_indicator.dart';
 import 'package:carsmeelien/services/resource/cars.dart';
 import 'package:carsmeelien/services/resource/inspection.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
@@ -126,109 +128,149 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
     }
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Auto Inspectie')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: AppAppBar(
+        title: RichText(
+          text: TextSpan(
             children: [
-              const Text(
-                "Voer de huidige staat van de auto in",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-
-              TextFormField(
-                controller: _odometerController,
-                decoration: const InputDecoration(
-                  labelText: 'Kilometerstand',
-                  prefixIcon: Icon(Icons.speed),
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty)
-                    return 'Voer de km-stand in';
-                  if (int.tryParse(value) == null)
-                    return 'Voer een geldig getal in';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Opmerkingen / Schadebeschrijving',
-                  alignLabelWithHint: true,
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 4,
-                validator: (value) {
-                  if (value == null || value.isEmpty)
-                    return 'Beschrijf de staat van de auto';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-
-              GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  width: double.infinity,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey[400]!),
-                    image: _imageFile != null
-                        ? DecorationImage(
-                            image: FileImage(_imageFile!),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  child: _imageFile == null
-                      ? const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.camera_alt,
-                              size: 50,
-                              color: AppColors.primary,
-                            ),
-                            Text("Maak een foto van de auto"),
-                          ],
-                        )
-                      : null,
-                ),
-              ),
-
-              const SizedBox(height: 30),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  onPressed: _submitForm,
-                  child: const Text(
-                    'Opslaan',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              ),
+              TextSpan(text: 'Auto', style: AppAppBar.titleTextStyle1),
+              TextSpan(text: 'Maat', style: AppAppBar.titleTextStyle2),
             ],
           ),
+        ),
+      ),
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 8),
+              const StepIndicator(currentStep: 3),
+              const SizedBox(height: 12),
+              
+              Text(
+                'Auto Inspectie',
+                style: AppTextStyles.sectionHeader.copyWith(fontSize: 20),
+              ),
+              const SizedBox(height: 16),
+
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Voer de huidige staat van de auto in bij inleveren.",
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
+                        const SizedBox(height: 20),
+
+                        _buildTextField(
+                          controller: _odometerController,
+                          label: 'Kilometerstand',
+                          icon: Icons.speed,
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 20),
+
+                        _buildTextField(
+                          controller: _descriptionController,
+                          label: 'Opmerkingen / Schade',
+                          maxLines: 3,
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Image Picker Box
+                        _buildImagePicker(),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              _buildSubmitButton(),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    IconData? icon,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: icon != null ? Icon(icon, color: AppColors.darkBlue) : null,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+      ),
+      validator: (value) => (value == null || value.isEmpty) ? 'Verplicht veld' : null,
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return GestureDetector(
+      onTap: _pickImage,
+      child: Container(
+        width: double.infinity,
+        height: 160,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+          image: _imageFile != null
+              ? DecorationImage(image: FileImage(_imageFile!), fit: BoxFit.cover)
+              : null,
+        ),
+        child: _imageFile == null
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.camera_alt_outlined, size: 40, color: AppColors.darkBlue),
+                  const SizedBox(height: 8),
+                  const Text("Maak een foto van de auto", style: TextStyle(color: Colors.grey)),
+                ],
+              )
+            : null,
+      ),
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.darkBlue,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 4,
+        ),
+        onPressed: _submitForm,
+        child: const Text(
+          'Inspectie Voltooien',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
