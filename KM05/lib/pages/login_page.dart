@@ -1,3 +1,4 @@
+import 'package:carsmeelien/pages/forgot_password.dart';
 import 'package:carsmeelien/services/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
@@ -131,7 +132,14 @@ class _LoginPageState extends State<LoginPage> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ForgotPasswordPage(),
+                              ),
+                            );
+                          },
                           child: const Text(
                             'Wachtwoord vergeten',
                             style: TextStyle(

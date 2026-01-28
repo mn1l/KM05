@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:carsmeelien/config/api_keys.dart';
 import 'package:carsmeelien/services/auth/token.dart';
+import 'package:carsmeelien/services/service.dart' as service;
 import 'package:http/http.dart' as http;
 
 final apiUrl = '${ApiKeys.apiBaseUrl}/api/authenticate';
