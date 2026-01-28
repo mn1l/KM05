@@ -10,7 +10,7 @@ class DamageReportsPage extends StatefulWidget {
 }
 
 class _DamageReportsPageState extends State<DamageReportsPage> {
-  // Nep data
+  // Nep data omdat schademeldingen niet gekoppeld kunnen worden aan een customer vanwege de backend
   final List<Map<String, dynamic>> damageReports = [
     {
       'carModel': 'Tesla Model 3',

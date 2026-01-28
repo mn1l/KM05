@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
 
-// Get single T object from Url
 Future<T> get<T>(String url, FromJson<T> fromJson) async {
   TokenService tokenService = TokenService();
 
@@ -24,7 +23,6 @@ Future<T> get<T>(String url, FromJson<T> fromJson) async {
   return fromJson(decodedBody);
 }
 
-// Get list of T objects from Url
 Future<List<T>> getList<T>(String url, FromJson<T> fromJson) async {
   TokenService tokenService = TokenService();
 
@@ -42,7 +40,6 @@ Future<List<T>> getList<T>(String url, FromJson<T> fromJson) async {
   return decoded.map((json) => fromJson(json as Map<String, dynamic>)).toList();
 }
 
-// Patch url with jsonBody
 Future<T> patch<T>(String url, FromJson<T> fromJson, String jsonBody) async {
   TokenService tokenService = TokenService();
 
@@ -65,7 +62,6 @@ Future<T> patch<T>(String url, FromJson<T> fromJson, String jsonBody) async {
   return fromJson(decodedBody);
 }
 
-// Post jsonBody at Url
 Future<T> post<T>(String url, FromJson<T> fromJson, String jsonBody) async {
   TokenService tokenService = TokenService();
 

@@ -208,7 +208,7 @@ class _InfoPageState extends State<InfoPage> {
 
             SizedBox(
               width: double.infinity,
-              height: 50, // Slightly shorter button
+              height: 50, 
               child: ElevatedButton(
                 onPressed: _handleRental,
                 style: ElevatedButton.styleFrom(

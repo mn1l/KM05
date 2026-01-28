@@ -58,7 +58,6 @@ class _OngoingPageState extends State<OngoingPage> {
                 ),
               ),
 
-              // Bottom Button Section
               _buildEndTripButton(context),
               const SizedBox(height: 20),
             ],
@@ -100,7 +99,6 @@ class _OngoingPageState extends State<OngoingPage> {
             ),
           ),
           const SizedBox(height: 4),
-          // Status label removed as requested
           
           const Divider(height: 32),
           
