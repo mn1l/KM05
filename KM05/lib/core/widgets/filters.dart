@@ -22,6 +22,7 @@ class FilterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start, 
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -46,6 +47,7 @@ class FilterSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Wrap(
+                alignment: WrapAlignment.start,
                 spacing: 8.0,
                 runSpacing: 4.0,
                 children: [
@@ -55,8 +57,9 @@ class FilterSection extends StatelessWidget {
                   _buildChip('Hybride', selectedFuel, onFuelChanged),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Wrap(
+                alignment: WrapAlignment.start,
                 spacing: 8.0,
                 runSpacing: 4.0,
                 children: [
@@ -73,27 +76,28 @@ class FilterSection extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildChip(
-    String label,
-    String current,
-    ValueChanged<String> onSelect,
-  ) {
+  
+  Widget _buildChip(String label, String current, ValueChanged<String> onSelect) {
     final bool isSelected = label == current;
     return FilterChip(
       label: Text(label),
       selected: isSelected,
       onSelected: (_) => onSelect(label),
       selectedColor: AppColors.darkBlue,
-      checkmarkColor: Colors.white,
+      showCheckmark: false,
       labelStyle: TextStyle(
-        color: isSelected ? Colors.white : Colors.black,
+        color: isSelected ? Colors.white : Colors.black87,
         fontSize: 12,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
       backgroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      visualDensity: VisualDensity.compact,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: AppColors.darkBlue.withOpacity(0.1)),
+        side: BorderSide(
+          color: isSelected ? AppColors.darkBlue : Colors.grey.shade300,
+        ),
       ),
     );
   }
