@@ -1,8 +1,8 @@
-import 'dart:convert';
 import 'package:carsmeelien/core/widgets/favorite_button.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/models/car.dart';
+import 'package:carsmeelien/core/widgets/card_image.dart';
 import 'package:carsmeelien/pages/rent/info_page.dart';
 
 class CarCard extends StatelessWidget {
@@ -34,22 +34,10 @@ class CarCard extends StatelessWidget {
         children: [
           Stack(
             children: [
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
-                ),
-                child: car.picture.isNotEmpty
-                    ? _buildImageWidget()
-                    : Container(
-                        width: imageWidth,
-                        height: height ?? double.infinity,
-                        color: AppColors.secondary,
-                        child: const Icon(
-                          Icons.car_rental,
-                          color: Colors.white,
-                        ),
-                      ),
+              CarImage(
+                base64String: car.picture,
+                width: imageWidth,
+                height: height,
               ),
               Positioned(
                 top: 4,
@@ -111,62 +99,19 @@ class CarCard extends StatelessWidget {
       ),
     );
 
-    if (width != null) {
-      return SizedBox(
-        width: width,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => InfoPage(car: car)),
-            );
-          },
-          child: card,
-        ),
-      );
-    }
-
-    return InkWell(
-      borderRadius: BorderRadius.circular(16),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => InfoPage(car: car)),
-        );
-      },
-      child: card,
-    );
+    return _wrapInInkWell(context, card);
   }
 
-  Widget _buildImageWidget() {
-    final picture = car.picture;
-    try {
-      final imageBytes = base64Decode(picture);
+  Widget _wrapInInkWell(BuildContext context, Widget card) {
+    final ink = InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => InfoPage(car: car)),
+      ),
+      child: card,
+    );
 
-      return Image.memory(
-        imageBytes,
-        width: imageWidth,
-        height: height ?? double.infinity,
-        fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          debugPrint('Failed to decode base64 image: $error');
-          return Container(
-            width: imageWidth,
-            height: height ?? double.infinity,
-            color: AppColors.secondary,
-            child: const Icon(Icons.image_not_supported, color: Colors.white),
-          );
-        },
-      );
-    } catch (e) {
-      debugPrint('Error decoding base64 image: $e');
-      return Container(
-        width: imageWidth,
-        height: height ?? double.infinity,
-        color: AppColors.secondary,
-        child: const Icon(Icons.image_not_supported, color: Colors.white),
-      );
-    }
+    return width != null ? SizedBox(width: width, child: ink) : ink;
   }
 }

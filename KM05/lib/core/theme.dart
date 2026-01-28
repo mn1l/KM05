@@ -33,3 +33,15 @@ final ThemeData appTheme = ThemeData(
     type: BottomNavigationBarType.fixed,
   ),
 );
+
+class RentalTheme {
+  static Color getStateColor(String state) {
+    return switch (state) {
+      "RESERVED" => Colors.orange,
+      "PICKUP" => AppColors.secondary,
+      "ACTIVE" => Colors.green,
+      "RETURNED" => Colors.grey,
+      _ => AppColors.darkBlue,
+    };
+  }
+}

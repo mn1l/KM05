@@ -65,4 +65,33 @@ class Rental {
       'car': car?.toJson(),
     };
   }
+
+  int get totalDays {
+    try {
+      final from = DateTime.parse(fromDate);
+      final to = DateTime.parse(toDate);
+      final days = to.difference(from).inDays;
+      return days > 0 ? days : 1;
+    } catch (e) {
+      return 1;
+    }
+  }
+
+  double get totalPrice => (car?.price ?? 0) * totalDays.toDouble();
+  
+  bool get isStartingToday {
+    final start = DateTime.parse(fromDate);
+    final now = DateTime.now();
+    return start.year == now.year && start.month == now.month && start.day == now.day;
+  }
+
+  String get stateLabel {
+    return switch (state) {
+      "RESERVED" => "Gereserveerd",
+      "PICKUP" => "Klaar voor ophalen",
+      "ACTIVE" => "Actief",
+      "RETURNED" => "Teruggebracht",
+      _ => state,
+    };
+  }
 }
