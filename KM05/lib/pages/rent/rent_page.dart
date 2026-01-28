@@ -64,7 +64,7 @@ class _RentPageState extends State<RentPage> {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   child: RentalCard(
                     rental: sectionRentals[index],
-                    height: 100,
+                    height: 110,
                     onReturn: _refreshRentals,
                   ),
                 ),

@@ -61,10 +61,10 @@ class RentalCard extends StatelessWidget {
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(12.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, 
                     children: [
                       Text(
                         '${rental.car?.brand} ${rental.car?.model} ${rental.car?.modelYear}',
@@ -73,21 +73,12 @@ class RentalCard extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height: 3),
+                      _buildInfoRow(Icons.euro, '${rental.totalPrice.toStringAsFixed(2)} totaal'),
+                      _buildInfoRow(Icons.people, '${rental.car?.nrOfSeats} personen'),
                       _buildInfoRow(
-                        Icons.euro,
-                        '${rental.totalPrice.toStringAsFixed(2)} totaal',
-                      ),
-                      const SizedBox(height: 3),
-                      _buildInfoRow(
-                        Icons.people,
-                        '${rental.car?.nrOfSeats} personen',
-                      ),
-                      const SizedBox(height: 3),
-                      _buildInfoRow(
-                        Icons.calendar_today,
+                        Icons.calendar_month,
+                        '${AppFormatters.shortDate(rental.fromDate)} - ${AppFormatters.shortDate(rental.toDate)}',
                         iconColor: AppColors.darkBlue,
-                        '${AppFormatters.date(rental.fromDate)} - ${AppFormatters.date(rental.toDate)}',
                       ),
                     ],
                   ),

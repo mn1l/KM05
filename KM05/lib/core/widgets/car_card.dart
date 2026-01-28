@@ -86,7 +86,7 @@ class CarCard extends StatelessWidget {
                       Icon(Icons.people, size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
-                        'Max ${car.nrOfSeats} personen',
+                        '${car.nrOfSeats} personen',
                         style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                     ],
