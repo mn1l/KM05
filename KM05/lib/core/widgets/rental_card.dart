@@ -4,7 +4,7 @@ import 'package:carsmeelien/pages/rent/ongoing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/utils/formatters.dart';
-import 'package:carsmeelien/core/widgets/card_image.dart';
+import 'package:carsmeelien/core/widgets/car_image.dart';
 
 class RentalCard extends StatelessWidget {
   final Rental rental;

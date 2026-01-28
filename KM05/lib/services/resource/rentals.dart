@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/services/resource/customer.dart';
 import 'package:carsmeelien/services/service.dart' as service;
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 final apiUrl = '${service.apiBaseUrl}/api/rentals';
 
@@ -16,7 +19,6 @@ Future<List<Rental>> getRentalsByState(String state) async {
 }
 
 Future<List<Rental>> getMyRentals() async {
-  // Omdat bij customer.rentals geen data is over de auto
   List<Rental> result = [];
 
   final customer = await getMe();
@@ -56,4 +58,26 @@ Future<Rental> postRental(Rental rental) async {
     Rental.fromJson,
     jsonEncode(rental.toJson()),
   );
+}
+
+Future<Rental> createRental(DateTimeRange dateRange, Car car) async {
+  final customer = await getMe();
+
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+
+  final rental = Rental(
+    id: 0,
+    code: "",
+    longitude: car.longitude,
+    latitude: car.latitude,
+    fromDate: formatter.format(dateRange.start),
+    toDate: formatter.format(dateRange.end),
+    state: "RESERVED",
+    inspections: [],
+    customer: customer,
+    car: car,
+  );
+
+  final savedRental = await postRental(rental);
+  return await updateRentalState(savedRental.id, "RESERVED");
 }

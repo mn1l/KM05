@@ -2,7 +2,7 @@ import 'package:carsmeelien/core/widgets/favorite_button.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/models/car.dart';
-import 'package:carsmeelien/core/widgets/card_image.dart';
+import 'package:carsmeelien/core/widgets/car_image.dart';
 import 'package:carsmeelien/pages/rent/info_page.dart';
 
 class CarCard extends StatelessWidget {

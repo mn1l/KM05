@@ -1,8 +1,5 @@
 import 'package:carsmeelien/core/utils/formatters.dart';
-import 'package:carsmeelien/models/rental.dart';
-import 'package:carsmeelien/pages/main_page.dart';
-import 'package:carsmeelien/services/auth/account.dart';
-import 'package:carsmeelien/services/resource/customer.dart';
+import 'package:carsmeelien/core/widgets/car_image.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
@@ -11,8 +8,6 @@ import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/pages/rent/widgets/step_indicator.dart';
 import 'package:carsmeelien/pages/rent/widgets/car_info_card.dart';
 import 'package:carsmeelien/pages/rent/widgets/expandable_sections.dart';
-import 'dart:convert';
-import 'package:intl/intl.dart';
 
 class InfoPage extends StatefulWidget {
   final Car car;
@@ -28,7 +23,6 @@ class _InfoPageState extends State<InfoPage> {
     end: DateTime.now(),
   );
 
-  // Logic to calculate total days and price
   int get _rentalDays => _selectedDateRange.duration.inDays;
   int get _totalPrice => _rentalDays * (widget.car.price);
 
@@ -73,11 +67,11 @@ class _InfoPageState extends State<InfoPage> {
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 8,
-        ), // Reduced vertical padding
+        ),
         child: Column(
           children: [
             StepIndicator(currentStep: 0),
-            const SizedBox(height: 12), // Compact spacing
+            const SizedBox(height: 12),
 
             Text(
               '${widget.car.brand} ${widget.car.model}',
@@ -85,18 +79,16 @@ class _InfoPageState extends State<InfoPage> {
             ),
             const SizedBox(height: 8),
 
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: _buildImageWidget(
-                widget.car,
-                height: 160,
-              ), // Smaller image height
+            CarImage(
+              base64String: widget.car.picture,
+              height: 160,
+              width: double.infinity,
+              borderRadius: BorderRadius.circular(12), 
             ),
 
             const SizedBox(height: 12),
             CarInfoCard(car: widget.car),
 
-            // Smaller gap if sections exist
             if ((widget.car.inspections?.isNotEmpty ?? false) ||
                 (widget.car.repairs?.isNotEmpty ?? false)) ...[
               const SizedBox(height: 8),
@@ -126,9 +118,7 @@ class _InfoPageState extends State<InfoPage> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            _selectedDateRange == null
-                                ? 'Kies data'
-                                : '${AppFormatters.shortDate(_selectedDateRange!.start)} - ${AppFormatters.shortDate(_selectedDateRange!.end)}',
+                            '${AppFormatters.shortDate(_selectedDateRange.start)} - ${AppFormatters.shortDate(_selectedDateRange.end)}',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -142,26 +132,26 @@ class _InfoPageState extends State<InfoPage> {
                       ],
                     ),
                   ),
-                  if (_selectedDateRange != null) ...[
-                    const Divider(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Totaal ($_rentalDays dagen):',
-                          style: TextStyle(color: Colors.grey[600]),
+                  ...[
+                  const Divider(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Totaal ($_rentalDays dagen):',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                      Text(
+                        '€${_totalPrice.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.darkBlue,
                         ),
-                        Text(
-                          '€${_totalPrice.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.darkBlue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
+                ],
                 ],
               ),
             ),
@@ -172,7 +162,7 @@ class _InfoPageState extends State<InfoPage> {
               width: double.infinity,
               height: 50, // Slightly shorter button
               child: ElevatedButton(
-                onPressed: _selectedDateRange == null ? null : _handleRental,
+                onPressed: _handleRental,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.darkBlue,
                   disabledBackgroundColor: Colors.grey[300],
@@ -195,52 +185,4 @@ class _InfoPageState extends State<InfoPage> {
       ),
     );
   }
-}
-
-// Update helper to accept height
-Widget _buildImageWidget(Car car, {double height = 200}) {
-  final picture = car.picture;
-  if (picture.isEmpty) return _placeholderImage(car, height);
-  try {
-    final imageBytes = base64Decode(picture);
-    return Image.memory(
-      imageBytes,
-      width: double.infinity,
-      height: height,
-      fit: BoxFit.cover,
-    );
-  } catch (e) {
-    return _placeholderImage(car, height);
-  }
-}
-
-Widget _placeholderImage(Car car, double height) {
-  return Container(
-    width: double.infinity,
-    height: height,
-    color: AppColors.darkYellow,
-    child: const Icon(Icons.directions_car, size: 48, color: Colors.white70),
-  );
-}
-
-void createRental(DateTimeRange dateRange, Car car) async {
-  final customer = await getMe();
-
-  final DateFormat formatter = DateFormat('yyyy-MM-dd');
-
-  final rental = Rental(
-    id: 0,
-    code: "",
-    longitude: car.longitude,
-    latitude: car.latitude,
-    fromDate: formatter.format(dateRange.start),
-    toDate: formatter.format(dateRange.end),
-    state: "RESERVED",
-    inspections: [],
-    customer: customer,
-    car: car,
-  );
-
-  final savedRental = await postRental(rental);
-  await updateRentalState(savedRental.id, "RESERVED");
 }
