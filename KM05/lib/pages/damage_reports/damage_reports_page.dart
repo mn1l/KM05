@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
-import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/pages/damage_reports/widgets/damage_report_card.dart';
 
 class DamageReportsPage extends StatefulWidget {

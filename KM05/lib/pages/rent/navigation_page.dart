@@ -122,8 +122,8 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final carLatLng = widget.rental!.car != null
-        ? LatLng(widget.rental!.car!.latitude, widget.rental.car!.longitude)
+    final carLatLng = widget.rental.car != null
+        ? LatLng(widget.rental.car!.latitude, widget.rental.car!.longitude)
         : null;
 
     return Scaffold(
@@ -167,7 +167,7 @@ class _NavigationPageState extends State<NavigationPage> {
                           ),
                         ),
                         Marker(
-                          point: carLatLng!,
+                          point: carLatLng,
                           width: 50,
                           height: 50,
                           child: const Icon(

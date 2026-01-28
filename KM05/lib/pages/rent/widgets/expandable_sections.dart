@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/models/car.dart';
 
 class ExpandableSections extends StatelessWidget {
