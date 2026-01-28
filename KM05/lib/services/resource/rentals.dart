@@ -18,6 +18,31 @@ Future<List<Rental>> getRentalsByState(String state) async {
   return allRentals.where((rental) => rental.state == state).toList();
 }
 
+Future<List<Rental>> getRentalsByCar(int carId) async {
+  final allRentals = await getRentals();
+  return allRentals.where((rental) => rental.car?.id == carId).toList();
+}
+
+Future<List<DateTime>> getCarAvailableDates(int carId) async {
+  final rentals = await getRentalsByCar(carId);
+
+  List<DateTime> occupiedDates = [];
+
+  for (var rental in rentals) {
+    DateTime start = DateTime.parse(rental.fromDate);
+    DateTime end = DateTime.parse(rental.toDate);
+
+    DateTime current = start;
+    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
+      occupiedDates.add(DateTime(current.year, current.month, current.day));
+
+      current = current.add(const Duration(days: 1));
+    }
+  }
+
+  return occupiedDates;
+}
+
 Future<List<Rental>> getMyRentals() async {
   List<Rental> result = [];
 
@@ -44,7 +69,11 @@ Future<Rental> updateRentalState(int rentalId, String state) async {
   );
 }
 
-Future<Rental> updateRentalLocation(int rentalId, double longitude, double latitude) async {
+Future<Rental> updateRentalLocation(
+  int rentalId,
+  double longitude,
+  double latitude,
+) async {
   return await service.patch<Rental>(
     '$apiUrl/$rentalId',
     Rental.fromJson,

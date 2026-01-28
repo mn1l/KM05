@@ -16,19 +16,29 @@ Future<List<Car>> getCars() async {
 
 Future<List<Car>> getAvailableCars() async {
   final cars = await getCars();
-
   final reservedRentals = await getRentalsByState("RESERVED");
   final activeRentals = await getRentalsByState("ACTIVE");
 
   final rentals = reservedRentals + activeRentals;
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
 
-  cars.map(
-    (car) => {
-      rentals.map((rental) => {if (rental.car == car) cars.remove(car)}),
-    },
-  );
+  return cars.where((car) {
+    bool isCurrentlyRented = rentals.any((rental) {
+      if (rental.car!.id != car.id) return false;
 
-  return cars;
+      DateTime start = DateTime.parse(rental.fromDate);
+      DateTime end = DateTime.parse(rental.toDate);
+
+      start = DateTime(start.year, start.month, start.day);
+      end = DateTime(end.year, end.month, end.day);
+
+      return (today.isAtSameMomentAs(start) || today.isAfter(start)) &&
+          (today.isAtSameMomentAs(end) || today.isBefore(end));
+    });
+
+    return !isCurrentlyRented;
+  }).toList();
 }
 
 Future<Car> updateCarLocation(int id, double longitude, double latitude) async {

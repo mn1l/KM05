@@ -25,6 +25,32 @@ class _InfoPageState extends State<InfoPage> {
 
   int get _rentalDays => _selectedDateRange.duration.inDays;
   int get _totalPrice => _rentalDays * (widget.car.price);
+  List<DateTime> _reservedDates = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReservedDates();
+  }
+
+  Future<void> _loadReservedDates() async {
+    final dates = await getCarAvailableDates(widget.car.id);
+    setState(() {
+      _reservedDates = dates;
+    });
+  }
+
+  // Date picker geeft een bug als ik date2 en date3 arguments weg laat.
+  bool _isDateSelectable(DateTime day, DateTime? date2, DateTime? date3) {
+    DateTime normalizedDay = DateTime(day.year, day.month, day.day);
+
+    return !_reservedDates.any(
+      (blockedDate) =>
+          blockedDate.year == normalizedDay.year &&
+          blockedDate.month == normalizedDay.month &&
+          blockedDate.day == normalizedDay.day,
+    );
+  }
 
   Future<void> _selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
@@ -32,6 +58,7 @@ class _InfoPageState extends State<InfoPage> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       initialDateRange: _selectedDateRange,
+      selectableDayPredicate: _isDateSelectable,
       builder: (context, child) => Theme(
         data: Theme.of(
           context,
@@ -39,7 +66,31 @@ class _InfoPageState extends State<InfoPage> {
         child: child!,
       ),
     );
-    if (picked != null) setState(() => _selectedDateRange = picked);
+    if (picked != null) {
+      bool hasReservedDateInRange = false;
+
+      for (int i = 0; i <= picked.duration.inDays; i++) {
+        DateTime dayToCheck = picked.start.add(Duration(days: i));
+
+        if (!_isDateSelectable(dayToCheck, null, null)) {
+          hasReservedDateInRange = true;
+          break;
+        }
+      }
+
+      if (hasReservedDateInRange) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Helaas, deze periode bevat dagen die al gereserveerd zijn.',
+            ),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      } else {
+        setState(() => _selectedDateRange = picked);
+      }
+    }
   }
 
   void _handleRental() {
@@ -64,10 +115,7 @@ class _InfoPageState extends State<InfoPage> {
       ),
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           children: [
             StepIndicator(currentStep: 0),
@@ -83,7 +131,7 @@ class _InfoPageState extends State<InfoPage> {
               base64String: widget.car.picture,
               height: 160,
               width: double.infinity,
-              borderRadius: BorderRadius.circular(12), 
+              borderRadius: BorderRadius.circular(12),
             ),
 
             const SizedBox(height: 12),
@@ -133,25 +181,25 @@ class _InfoPageState extends State<InfoPage> {
                     ),
                   ),
                   ...[
-                  const Divider(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Totaal ($_rentalDays dagen):',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                      Text(
-                        '€${_totalPrice.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.darkBlue,
+                    const Divider(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Totaal ($_rentalDays dagen):',
+                          style: TextStyle(color: Colors.grey[600]),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Text(
+                          '€${_totalPrice.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.darkBlue,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
