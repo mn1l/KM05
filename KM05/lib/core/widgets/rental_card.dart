@@ -67,7 +67,7 @@ class RentalCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween, 
                     children: [
                       Text(
-                        '${rental.car?.brand} ${rental.car?.model} ${rental.car?.modelYear}',
+                        '${rental.car?.brand} ${rental.car?.model}',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,

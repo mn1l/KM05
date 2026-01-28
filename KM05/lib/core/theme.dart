@@ -37,9 +37,9 @@ final ThemeData appTheme = ThemeData(
 class RentalTheme {
   static Color getStateColor(String state) {
     return switch (state) {
-      "RESERVED" => Colors.orange,
-      "PICKUP" => AppColors.secondary,
-      "ACTIVE" => Colors.green,
+      "RESERVED" => AppColors.darkBlue,
+      "PICKUP" => AppColors.darkYellow,
+      "ACTIVE" => const Color.fromARGB(255, 88, 172, 90),
       "RETURNED" => Colors.grey,
       _ => AppColors.darkBlue,
     };
