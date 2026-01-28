@@ -109,7 +109,7 @@ class _OngoingPageState extends State<OngoingPage> {
             children: [
               _buildQuickAction(Icons.lock_open, "Openen"),
               _buildQuickAction(Icons.lock, "Sluiten"),
-              _buildQuickAction(Icons.lightbulb_outline, "Lichten"),
+              _buildQuickAction(Icons.warning_amber_rounded, "Alarm"),
             ],
           ),
         ],
