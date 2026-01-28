@@ -51,9 +51,7 @@ class _InfoPageState extends State<InfoPage> {
     if (_rentalDays < 1) return;
     createRental(_selectedDateRange, widget.car);
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const MainPage()),
-    );
+    Navigator.pop(context);
   }
 
   @override
@@ -226,17 +224,13 @@ Widget _placeholderImage(Car car, double height) {
 }
 
 void createRental(DateTimeRange dateRange, Car car) async {
-  final account = await getAccountDetails();
-
   final customer = await getMe();
-
-  print(jsonEncode(customer));
 
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
 
   final rental = Rental(
     id: 0,
-    code: "long",
+    code: "",
     longitude: car.longitude,
     latitude: car.latitude,
     fromDate: formatter.format(dateRange.start),

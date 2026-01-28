@@ -42,7 +42,7 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
         _imageFile = File(pickedFile.path);
-        _base64Photo = base64Encode(bytes); // Convert to Base64 for your model
+        _base64Photo = base64Encode(bytes);
       });
     }
   }
@@ -51,7 +51,6 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
     bool serviceEnabled;
     LocationPermission permission;
 
-    // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Locatievoorzieningen zijn uitgeschakeld.');
