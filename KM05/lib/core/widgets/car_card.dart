@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:carsmeelien/core/widgets/favorite_button.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/models/car.dart';
@@ -9,6 +10,7 @@ class CarCard extends StatelessWidget {
   final double? width;
   final double? height;
   final double imageWidth;
+  final VoidCallback? onFavoriteChange;
 
   const CarCard({
     super.key,
@@ -16,6 +18,7 @@ class CarCard extends StatelessWidget {
     this.width,
     this.height,
     this.imageWidth = 100,
+    required this.onFavoriteChange,
   });
 
   @override
@@ -29,19 +32,37 @@ class CarCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              bottomLeft: Radius.circular(16),
-            ),
-            child: car.picture.isNotEmpty
-                ? _buildImageWidget()
-                : Container(
-                    width: imageWidth,
-                    height: height ?? double.infinity,
-                    color: AppColors.secondary,
-                    child: const Icon(Icons.car_rental, color: Colors.white),
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  bottomLeft: Radius.circular(16),
+                ),
+                child: car.picture.isNotEmpty
+                    ? _buildImageWidget()
+                    : Container(
+                        width: imageWidth,
+                        height: height ?? double.infinity,
+                        color: AppColors.secondary,
+                        child: const Icon(
+                          Icons.car_rental,
+                          color: Colors.white,
+                        ),
+                      ),
+              ),
+              Positioned(
+                top: 4,
+                left: 4,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.7),
+                    shape: BoxShape.circle,
                   ),
+                  child: FavoriteButton(car: car, onChange: onFavoriteChange),
+                ),
+              ),
+            ],
           ),
           Expanded(
             child: Padding(
@@ -60,11 +81,7 @@ class CarCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
-                        Icons.euro,
-                        size: 16,
-                        color: AppColors.darkBlue,
-                      ),
+                      Icon(Icons.euro, size: 16, color: AppColors.darkBlue),
                       const SizedBox(width: 4),
                       Text(
                         '${car.price} per dag',
@@ -78,18 +95,11 @@ class CarCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
-                        Icons.people,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
+                      Icon(Icons.people, size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
                         'Max ${car.nrOfSeats} personen',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                     ],
                   ),
@@ -109,9 +119,7 @@ class CarCard extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => InfoPage(car: car),
-              ),
+              MaterialPageRoute(builder: (context) => InfoPage(car: car)),
             );
           },
           child: card,
@@ -124,9 +132,7 @@ class CarCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => InfoPage(car: car),
-          ),
+          MaterialPageRoute(builder: (context) => InfoPage(car: car)),
         );
       },
       child: card,
@@ -135,7 +141,7 @@ class CarCard extends StatelessWidget {
 
   Widget _buildImageWidget() {
     final picture = car.picture;
-       try {
+    try {
       final imageBytes = base64Decode(picture);
 
       return Image.memory(
@@ -149,10 +155,7 @@ class CarCard extends StatelessWidget {
             width: imageWidth,
             height: height ?? double.infinity,
             color: AppColors.secondary,
-            child: const Icon(
-              Icons.image_not_supported,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.image_not_supported, color: Colors.white),
           );
         },
       );
@@ -162,10 +165,7 @@ class CarCard extends StatelessWidget {
         width: imageWidth,
         height: height ?? double.infinity,
         color: AppColors.secondary,
-        child: const Icon(
-          Icons.image_not_supported,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.image_not_supported, color: Colors.white),
       );
     }
   }

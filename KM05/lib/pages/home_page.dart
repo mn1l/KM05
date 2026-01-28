@@ -1,8 +1,8 @@
-import 'dart:math';
 import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/pages/login_page.dart';
 import 'package:carsmeelien/services/auth/token.dart';
 import 'package:carsmeelien/services/resource/cars.dart';
+import 'package:carsmeelien/services/storage/favorites.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
@@ -21,35 +21,34 @@ class _HomePageState extends State<HomePage> {
   bool _isLoading = true;
 
   late Future<List<Car>> _carsFuture;
+  late Future<List<Car>> _favoritesFuture;
 
   @override
   void initState() {
     super.initState();
     _carsFuture = getAvailableCars();
+    _favoritesFuture = getFavorites();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAuth();
     });
   }
 
-  Future<void> _checkAuth() async {
-    // Assuming your tokenService is imported or available
-    bool authorized = await tokenService.isAuthorized();
+  void _refreshData() {
+    setState(() {
+      _favoritesFuture = getFavorites();
+    });
+  }
 
+  Future<void> _checkAuth() async {
+    bool authorized = await tokenService.isAuthorized();
     if (authorized) {
       setState(() => _isLoading = false);
-    }
-    else if (mounted) {
+    } else if (mounted) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     }
-  }
-
-  List<Car> _getRandomCars(List<Car> cars, int count) {
-    if (cars.length <= count) return cars;
-    final random = Random();
-    final shuffled = List<Car>.from(cars)..shuffle(random);
-    return shuffled.take(count).toList();
   }
 
   @override
@@ -78,11 +77,12 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text('Favorieten', style: AppTextStyles.sectionHeader),
                 TextButton(
-                  onPressed: () {
-                    Navigator.push(
+                  onPressed: () async {
+                    await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const FavoritesPage()),
                     );
+                    _refreshData();
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: AppColors.darkBlue,
@@ -99,21 +99,21 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 120,
               child: FutureBuilder<List<Car>>(
-                future: _carsFuture,
+                future: _favoritesFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
-                  if (snapshot.hasError || !snapshot.hasData) {
-                    return const SizedBox.shrink();
-                  }
-
-                  final allCars = snapshot.data!;
-                  final favoriteCars = _getRandomCars(allCars, 3);
+                  final favoriteCars = snapshot.data ?? [];
 
                   if (favoriteCars.isEmpty) {
-                    return const SizedBox.shrink();
+                    return const Center(
+                      child: Text(
+                        'Geen favorieten opgeslagen',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                    );
                   }
 
                   return ListView.separated(
@@ -125,6 +125,7 @@ class _HomePageState extends State<HomePage> {
                         car: favoriteCars[index],
                         width: 220,
                         imageWidth: 80,
+                        onFavoriteChange: _refreshData,
                       );
                     },
                   );
@@ -144,14 +145,11 @@ class _HomePageState extends State<HomePage> {
 
                   if (snapshot.hasError) {
                     return Center(
-                      child: Text(
-                        'Fout bij laden: ${snapshot.error}',
-                        style: AppTextStyles.sectionHeader,
-                      ),
+                      child: Text('Fout bij laden: ${snapshot.error}'),
                     );
                   }
 
-                  final cars = snapshot.data!;
+                  final cars = snapshot.data ?? [];
 
                   if (cars.isEmpty) {
                     return const Center(child: Text('Geen auto’s gevonden'));
@@ -161,12 +159,11 @@ class _HomePageState extends State<HomePage> {
                     itemCount: cars.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
-                      final car = cars[index];
-
                       return CarCard(
-                        car: car,
+                        car: cars[index],
                         height: 100,
                         imageWidth: 100,
+                        onFavoriteChange: _refreshData,
                       );
                     },
                   );

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:carsmeelien/services/storage/favorites.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
@@ -19,14 +20,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   void initState() {
     super.initState();
-    _carsFuture = getAvailableCars();
+    _carsFuture = getFavorites();
   }
 
-  List<Car> _getRandomCars(List<Car> cars, int count) {
-    if (cars.length <= count) return cars;
-    final random = Random();
-    final shuffled = List<Car>.from(cars)..shuffle(random);
-    return shuffled.take(count).toList();
+  void _refreshData() {
+    setState(() {
+      _carsFuture = getFavorites();
+    });
   }
 
   @override
@@ -52,34 +52,24 @@ class _FavoritesPageState extends State<FavoritesPage> {
             }
 
             if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Fout bij laden: ${snapshot.error}',
-                  style: AppTextStyles.sectionHeader,
-                ),
-              );
+              return Center(child: Text('Fout bij laden: ${snapshot.error}'));
             }
 
-            final allCars = snapshot.data ?? [];
-            final favoriteCars = _getRandomCars(allCars, 3);
+            final cars = snapshot.data ?? [];
 
-            if (favoriteCars.isEmpty) {
-              return const Center(
-                child: Text(
-                  'Geen favorieten gevonden',
-                  style: TextStyle(fontSize: 16),
-                ),
-              );
+            if (cars.isEmpty) {
+              return const Center(child: Text('Geen auto’s gevonden'));
             }
 
             return ListView.separated(
-              itemCount: favoriteCars.length,
+              itemCount: cars.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 return CarCard(
-                  car: favoriteCars[index],
+                  car: cars[index],
                   height: 100,
                   imageWidth: 100,
+                  onFavoriteChange: _refreshData,
                 );
               },
             );
