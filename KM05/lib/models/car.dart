@@ -66,21 +66,15 @@ class Car {
       body: json['body'] as String,
       longitude: (json['longitude'] as num).toDouble() ?? 0.0,
       latitude: (json['latitude'] as num).toDouble() ?? 0.0,
-      inspections:
-          inspectionsJson
-              ?.map((e) => Inspection.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [], // default empty list if null
-      repairs:
-          repairsJson
-              ?.map((e) => Repair.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [], // default empty list if null
-      rentals:
-          rentalsJson
-              ?.map((e) => Rental.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [], // default empty list if null
+      inspections: inspectionsJson != null
+              ? inspectionsJson.map((e) => Inspection.fromJson(e as Map<String, dynamic>)).toList()
+              : [],
+      repairs: repairsJson != null
+              ? repairsJson.map((e) => Repair.fromJson(e as Map<String, dynamic>)).toList()
+              : [],
+      rentals: rentalsJson != null
+              ? rentalsJson.map((e) => Rental.fromJson(e as Map<String, dynamic>)).toList()
+              : [],
     );
   }
 

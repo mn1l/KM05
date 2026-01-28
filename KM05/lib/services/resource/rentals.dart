@@ -1,30 +1,59 @@
 import 'dart:convert';
 
 import 'package:carsmeelien/models/rental.dart';
-import 'package:carsmeelien/services/auth/token.dart';
-import 'package:http/http.dart' as http;
+import 'package:carsmeelien/services/resource/customer.dart';
+import 'package:carsmeelien/services/service.dart' as service;
 
-const apiUrl = 'http://192.168.178.42:8080/api/rentals';
+final apiUrl = '${service.apiBaseUrl}/api/rentals';
 
 Future<List<Rental>> getRentals() async {
-  TokenService tokenService = TokenService();
-  final response = await http.get(
-    Uri.parse(apiUrl),
-    headers: {"Authorization": 'Bearer ${await tokenService.getToken()}'},
-  );
-
-  if (response.statusCode != 200) {
-    throw Exception('Failed to get rentals: ${response.statusCode}');
-  }
-
-  final List<dynamic> decoded = jsonDecode(response.body);
-
-  return decoded
-      .map((json) => Rental.fromJson(json as Map<String, dynamic>))
-      .toList();
+  return await service.getList<Rental>(apiUrl, Rental.fromJson);
 }
 
 Future<List<Rental>> getRentalsByState(String state) async {
   final allRentals = await getRentals();
   return allRentals.where((rental) => rental.state == state).toList();
+}
+
+Future<List<Rental>> getMyRentals() async {
+  // Omdat bij customer.rentals geen data is over de auto
+  List<Rental> result = [];
+
+  final customer = await getMe();
+
+  result = await Future.wait(
+    customer.rentals.map((rental) async {
+      return await getRentalById(rental.id);
+    }),
+  );
+
+  return result;
+}
+
+Future<Rental> getRentalById(int id) async {
+  return await service.get<Rental>('$apiUrl/$id', Rental.fromJson);
+}
+
+Future<Rental> updateRentalState(int rentalId, String state) async {
+  return await service.patch<Rental>(
+    '$apiUrl/$rentalId',
+    Rental.fromJson,
+    jsonEncode({'id': rentalId, 'state': state}),
+  );
+}
+
+Future<Rental> updateRentalLocation(int rentalId, double longitude, double latitude) async {
+  return await service.patch<Rental>(
+    '$apiUrl/$rentalId',
+    Rental.fromJson,
+    jsonEncode({'id': rentalId, 'longitude': longitude, 'latitude': latitude}),
+  );
+}
+
+Future<Rental> postRental(Rental rental) async {
+  return await service.post<Rental>(
+    apiUrl,
+    Rental.fromJson,
+    jsonEncode(rental.toJson()),
+  );
 }

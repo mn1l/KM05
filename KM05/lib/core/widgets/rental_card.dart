@@ -1,22 +1,44 @@
 import 'dart:convert';
+import 'package:carsmeelien/models/rental.dart';
+import 'package:carsmeelien/pages/rent/navigation_page.dart';
+import 'package:carsmeelien/pages/rent/ongoing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
-import 'package:carsmeelien/models/car.dart';
-import 'package:carsmeelien/pages/rent/info_page.dart';
 
-class CarCard extends StatelessWidget {
-  final Car car;
+// TODO NEEDS REWORK TO FIT RENTAL CLASS
+class RentalCard extends StatelessWidget {
+  final Rental rental;
   final double? width;
   final double? height;
   final double imageWidth;
 
-  const CarCard({
+  const RentalCard({
     super.key,
-    required this.car,
+    required this.rental,
     this.width,
     this.height,
     this.imageWidth = 100,
   });
+
+  void handleNavigate(BuildContext context) {
+    Widget? page;
+
+    page = switch (rental.state) {
+      "RESERVED" || "PICKUP" => NavigationPage(rental: rental),
+      "ACTIVE" => OngoingPage(rental: rental),
+      _ => null, // Handle unknown states
+    };
+
+    DateTime startDate = DateTime.parse(rental.fromDate);
+    DateTime now = DateTime.now();
+    bool isToday = startDate.year == now.year &&
+                   startDate.month == now.month &&
+                   startDate.day == now.day;
+
+    if (page != null && isToday) { // TODO Add visuals in the UI: Make the card like greyed out if the rental is not yet due for today.
+      Navigator.push(context, MaterialPageRoute(builder: (context) => page!));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +56,7 @@ class CarCard extends StatelessWidget {
               topLeft: Radius.circular(16),
               bottomLeft: Radius.circular(16),
             ),
-            child: car.picture.isNotEmpty
+            child: rental.car!.picture.isNotEmpty
                 ? _buildImageWidget()
                 : Container(
                     width: imageWidth,
@@ -51,7 +73,7 @@ class CarCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${car.brand} ${car.model} ${car.modelYear}',
+                    '${rental.car!.brand} ${rental.car!.model} ${rental.car!.modelYear}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -60,14 +82,10 @@ class CarCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
-                        Icons.euro,
-                        size: 16,
-                        color: AppColors.darkBlue,
-                      ),
+                      Icon(Icons.euro, size: 16, color: AppColors.darkBlue),
                       const SizedBox(width: 4),
                       Text(
-                        '${car.price} per dag',
+                        '${rental.car!.price} per dag',
                         style: TextStyle(
                           color: AppColors.darkBlue,
                           fontWeight: FontWeight.w500,
@@ -78,19 +96,13 @@ class CarCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
-                        Icons.people,
-                        size: 16,
-                        color: Colors.grey[600],
-                      ),
+                      Icon(Icons.people, size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
-                        'Max ${car.nrOfSeats} personen',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
+                        'Max ${rental.car!.nrOfSeats} personen',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
+                      Text(rental.state == "RETURNED" ? ' Teruggebracht' : ''),
                     ],
                   ),
                 ],
@@ -107,12 +119,7 @@ class CarCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => InfoPage(car: car),
-              ),
-            );
+            handleNavigate(context);
           },
           child: card,
         ),
@@ -122,20 +129,15 @@ class CarCard extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => InfoPage(car: car),
-          ),
-        );
+        handleNavigate(context);
       },
       child: card,
     );
   }
 
   Widget _buildImageWidget() {
-    final picture = car.picture;
-       try {
+    final picture = rental.car!.picture;
+    try {
       final imageBytes = base64Decode(picture);
 
       return Image.memory(
@@ -149,10 +151,7 @@ class CarCard extends StatelessWidget {
             width: imageWidth,
             height: height ?? double.infinity,
             color: AppColors.secondary,
-            child: const Icon(
-              Icons.image_not_supported,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.image_not_supported, color: Colors.white),
           );
         },
       );
@@ -162,10 +161,7 @@ class CarCard extends StatelessWidget {
         width: imageWidth,
         height: height ?? double.infinity,
         color: AppColors.secondary,
-        child: const Icon(
-          Icons.image_not_supported,
-          color: Colors.white,
-        ),
+        child: const Icon(Icons.image_not_supported, color: Colors.white),
       );
     }
   }
