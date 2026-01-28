@@ -31,13 +31,11 @@ class _LoginPageState extends State<LoginPage> {
     try {
       await login(username, password);
 
-      // Navigate to main page
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const MainPage()),
         (route) => false,
       );
-    } catch(e) {
-      // Error message
+    } catch (e) {
       return;
     }
   }

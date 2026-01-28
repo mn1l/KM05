@@ -38,18 +38,28 @@ class MapCard extends StatelessWidget {
             if (routePoints.isNotEmpty)
               PolylineLayer(
                 polylines: [
-                  Polyline(points: routePoints, color: AppColors.darkBlue, strokeWidth: 4),
+                  Polyline(
+                    points: routePoints,
+                    color: AppColors.darkBlue,
+                    strokeWidth: 4,
+                  ),
                 ],
               ),
             MarkerLayer(
               markers: [
                 Marker(
                   point: userLocation,
-                  child: const Icon(Icons.my_location, color: AppColors.darkBlue),
+                  child: const Icon(
+                    Icons.my_location,
+                    color: AppColors.darkBlue,
+                  ),
                 ),
                 Marker(
                   point: carLocation,
-                  child: const Icon(Icons.directions_car, color: AppColors.darkYellow),
+                  child: const Icon(
+                    Icons.directions_car,
+                    color: AppColors.darkYellow,
+                  ),
                 ),
               ],
             ),

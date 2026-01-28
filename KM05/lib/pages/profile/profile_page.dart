@@ -57,7 +57,10 @@ class _ProfilePageState extends State<ProfilePage> {
           text: TextSpan(
             children: [
               TextSpan(text: 'Hallo ', style: AppAppBar.titleTextStyle1),
-              TextSpan(text: account?.login != null ? '${account!.login}!' : '!', style: AppAppBar.titleTextStyle2),
+              TextSpan(
+                text: account?.login != null ? '${account!.login}!' : '!',
+                style: AppAppBar.titleTextStyle2,
+              ),
             ],
           ),
         ),
@@ -93,9 +96,17 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             child: Column(
               children: [
-                DataInputField(hint: 'Naam', icon: Icons.person_outline, controller: _loginController),
+                DataInputField(
+                  hint: 'Naam',
+                  icon: Icons.person_outline,
+                  controller: _loginController,
+                ),
                 SizedBox(height: 12),
-                DataInputField(hint: 'E-mailadres', icon: Icons.email_outlined, controller: _emailController),
+                DataInputField(
+                  hint: 'E-mailadres',
+                  icon: Icons.email_outlined,
+                  controller: _emailController,
+                ),
                 SizedBox(height: 12),
               ],
             ),

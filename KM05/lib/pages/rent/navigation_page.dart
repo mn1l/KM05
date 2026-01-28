@@ -32,20 +32,20 @@ class _NavigationPageState extends State<NavigationPage> {
     _setupNavigation();
   }
 
-Future<void> _setupNavigation() async {
+  Future<void> _setupNavigation() async {
     try {
       final userLatLng = await LocationHelper.getCurrentLocation();
-      
+
       setState(() => _userLocation = userLatLng);
 
       if (widget.rental.car != null) {
         final carLatLng = LatLng(
-          widget.rental.car!.latitude, 
-          widget.rental.car!.longitude
+          widget.rental.car!.latitude,
+          widget.rental.car!.longitude,
         );
 
         final route = await MapService.fetchRoute(userLatLng, carLatLng);
-        
+
         if (mounted) {
           setState(() => _routePoints = route);
           _mapController.move(userLatLng, 17.0);
@@ -58,7 +58,8 @@ Future<void> _setupNavigation() async {
 
   @override
   Widget build(BuildContext context) {
-    if (_userLocation == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_userLocation == null)
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
     return Scaffold(
       appBar: AppAppBar(
@@ -88,7 +89,10 @@ Future<void> _setupNavigation() async {
               child: MapCard(
                 controller: _mapController,
                 userLocation: _userLocation!,
-                carLocation: LatLng(widget.rental.car!.latitude, widget.rental.car!.longitude),
+                carLocation: LatLng(
+                  widget.rental.car!.latitude,
+                  widget.rental.car!.longitude,
+                ),
                 routePoints: _routePoints,
               ),
             ),

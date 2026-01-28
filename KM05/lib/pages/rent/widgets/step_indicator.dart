@@ -16,19 +16,14 @@ class StepIndicator extends StatelessWidget {
 
         return Row(
           children: [
-            StepCircle(
-              number: index + 1,
-              isActive: isActive,
-            ),
+            StepCircle(number: index + 1, isActive: isActive),
             if (index < 3)
               Container(
                 width: 40,
                 height: 4,
                 margin: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
-                  color: isActive
-                      ? AppColors.darkYellow
-                      : AppColors.darkBlue,
+                  color: isActive ? AppColors.darkYellow : AppColors.darkBlue,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),

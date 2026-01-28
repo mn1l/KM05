@@ -143,7 +143,6 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
               ),
               const SizedBox(height: 20),
 
-              // Odometer Field
               TextFormField(
                 controller: _odometerController,
                 decoration: const InputDecoration(
