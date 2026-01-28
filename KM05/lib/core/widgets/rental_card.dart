@@ -11,6 +11,7 @@ class RentalCard extends StatelessWidget {
   final double? width;
   final double? height;
   final double imageWidth;
+  final VoidCallback? onReturn;
 
   const RentalCard({
     super.key,
@@ -18,9 +19,10 @@ class RentalCard extends StatelessWidget {
     this.width,
     this.height,
     this.imageWidth = 100,
+    required this.onReturn,
   });
 
-  void handleNavigate(BuildContext context) {
+  void handleNavigate(BuildContext context) async {
     Widget? page = switch (rental.state) {
       "RESERVED" || "PICKUP" => NavigationPage(rental: rental),
       "ACTIVE" => OngoingPage(rental: rental),
@@ -28,7 +30,12 @@ class RentalCard extends StatelessWidget {
     };
 
     if (page != null && rental.isStartingToday) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => page),
+      );
+
+      onReturn?.call();
     }
   }
 
@@ -61,12 +68,21 @@ class RentalCard extends StatelessWidget {
                     children: [
                       Text(
                         '${rental.car?.brand} ${rental.car?.model} ${rental.car?.modelYear}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(height: 3),
-                      _buildInfoRow(Icons.euro, '${rental.totalPrice.toStringAsFixed(2)} totaal'),
+                      _buildInfoRow(
+                        Icons.euro,
+                        '${rental.totalPrice.toStringAsFixed(2)} totaal',
+                      ),
                       const SizedBox(height: 3),
-                      _buildInfoRow(Icons.people, '${rental.car?.nrOfSeats} personen'),
+                      _buildInfoRow(
+                        Icons.people,
+                        '${rental.car?.nrOfSeats} personen',
+                      ),
                       const SizedBox(height: 3),
                       _buildInfoRow(
                         Icons.calendar_today,
@@ -90,7 +106,11 @@ class RentalCard extends StatelessWidget {
               ),
               child: Text(
                 rental.stateLabel,
-                style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),
@@ -108,19 +128,17 @@ class RentalCard extends StatelessWidget {
   Widget _buildInfoRow(IconData icon, String text, {Color? iconColor}) {
     return Row(
       children: [
-        Icon(
-          icon, 
-          size: 16, 
-          color: iconColor ?? Colors.grey[600], 
-        ),
+        Icon(icon, size: 16, color: iconColor ?? Colors.grey[600]),
         const SizedBox(width: 4),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
-              color: Colors.grey[600], 
+              color: Colors.grey[600],
               fontSize: 12,
-              fontWeight: iconColor != null ? FontWeight.bold : FontWeight.normal,
+              fontWeight: iconColor != null
+                  ? FontWeight.bold
+                  : FontWeight.normal,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

@@ -2,7 +2,6 @@ import 'package:carsmeelien/core/widgets/rental_card.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
-import 'package:carsmeelien/core/widgets/car_card.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
 
@@ -26,6 +25,12 @@ class _RentHistoryPageState extends State<RentHistoryPage> {
     return rentals
         .where((rental) => rental.state.toUpperCase() == 'RETURNED')
         .toList();
+  }
+
+  void _refreshRentals() {
+    setState(() {
+      _rentalsFuture = getMyRentals();
+    });
   }
 
   @override
@@ -76,7 +81,12 @@ class _RentHistoryPageState extends State<RentHistoryPage> {
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
                 final rental = completedRentals[index];
-                return RentalCard(rental: rental, height: 100, imageWidth: 100);
+                return RentalCard(
+                  rental: rental,
+                  height: 100,
+                  imageWidth: 100,
+                  onReturn: _refreshRentals,
+                );
               },
             );
           },

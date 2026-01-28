@@ -128,12 +128,10 @@ class _NavigationPageState extends State<NavigationPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Navigation')),
-      // We use a Stack to place the button on top of the map
       body: _userLocation == null || carLatLng == null
           ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
-                // Layer 0: The Map
                 FlutterMap(
                   mapController: _mapController,
                   options: MapOptions(
@@ -142,7 +140,8 @@ class _NavigationPageState extends State<NavigationPage> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      urlTemplate:
+                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                       userAgentPackageName: 'com.example.carsmeelien',
                     ),
                     if (_routePoints.isNotEmpty)
@@ -168,7 +167,7 @@ class _NavigationPageState extends State<NavigationPage> {
                           ),
                         ),
                         Marker(
-                          point: carLatLng!, // Used ! because we checked null above
+                          point: carLatLng!,
                           width: 50,
                           height: 50,
                           child: const Icon(
@@ -182,7 +181,6 @@ class _NavigationPageState extends State<NavigationPage> {
                   ],
                 ),
 
-                // Layer 1: The Overlapping Button
                 Positioned(
                   bottom: 20,
                   left: 20,
@@ -196,17 +194,25 @@ class _NavigationPageState extends State<NavigationPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        elevation: 8, // Adds a shadow to stand out from the map
+                        elevation: 8,
                       ),
                       onPressed: () async {
-                        final rental = await updateRentalState(widget.rental.id, "ACTIVE");
+                        final rental = await updateRentalState(
+                          widget.rental.id,
+                          "ACTIVE",
+                        );
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(builder: (context) => OngoingPage(rental: rental)),
+                          MaterialPageRoute(
+                            builder: (context) => OngoingPage(rental: rental),
+                          ),
                         );
                       },
                       child: const Text(
                         'Aangekomen',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

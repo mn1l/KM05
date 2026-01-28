@@ -46,11 +46,14 @@ class _OngoingPageState extends State<OngoingPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 8, // Adds a shadow to stand out from the map
+                    elevation: 8,
                   ),
                   onPressed: () async {
                     Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => InspectionFormPage(rental: widget.rental)),
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            InspectionFormPage(rental: widget.rental),
+                      ),
                     );
                   },
                   child: const Text(

@@ -21,11 +21,27 @@ class _RentPageState extends State<RentPage> {
     _rentalsFuture = getMyRentals();
   }
 
+  @override
+  void dispose() {
+    _rentalsFuture = Future.value([]);
+    super.dispose();
+  }
+
+  void _refreshRentals() {
+    setState(() {
+      _rentalsFuture = getMyRentals();
+    });
+  }
+
   List<Rental> _filterRentals(List<Rental> rentals, List<String> states) {
     return rentals.where((rental) => states.contains(rental.state)).toList();
   }
 
-  Widget _buildSection(String title, List<Rental> sectionRentals, {double opacity = 1.0}) {
+  Widget _buildSection(
+    String title,
+    List<Rental> sectionRentals, {
+    double opacity = 1.0,
+  }) {
     if (sectionRentals.isEmpty) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
@@ -35,30 +51,25 @@ class _RentPageState extends State<RentPage> {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Text(
-              title,
-              style: AppTextStyles.sectionHeader
-            ),
+            child: Text(title, style: AppTextStyles.sectionHeader),
           ),
         ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Opacity(
-                  opacity: opacity,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: RentalCard(
-                      rental: sectionRentals[index],
-                      height: 100,
-                    ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return Opacity(
+                opacity: opacity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: RentalCard(
+                    rental: sectionRentals[index],
+                    height: 100,
+                    onReturn: _refreshRentals,
                   ),
-                );
-              },
-              childCount: sectionRentals.length,
-            ),
+                ),
+              );
+            }, childCount: sectionRentals.length),
           ),
         ),
         const SliverToBoxAdapter(child: SizedBox(height: 16)),

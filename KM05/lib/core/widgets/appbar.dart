@@ -18,12 +18,11 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
     fontWeight: FontWeight.bold,
   );
 
-  const AppAppBar({
-    super.key,
-    this.title,
-    this.titleText,
-    this.actions,
-  }) : assert(title == null || titleText == null, 'Cannot provide both title and titleText');
+  const AppAppBar({super.key, this.title, this.titleText, this.actions})
+    : assert(
+        title == null || titleText == null,
+        'Cannot provide both title and titleText',
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +31,8 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       toolbarHeight: 120,
       centerTitle: true,
-      iconTheme: const IconThemeData(
-        color: AppColors.darkBlue,
-        size: 32,
-      ),
-      title: title ?? (titleText != null 
-        ? Text(
-            titleText!,
-          )
-        : null),
+      iconTheme: const IconThemeData(color: AppColors.darkBlue, size: 32),
+      title: title ?? (titleText != null ? Text(titleText!) : null),
       actions: actions,
     );
   }
@@ -48,4 +40,3 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(120);
 }
-

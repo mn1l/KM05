@@ -40,6 +40,13 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  @override
+  void dispose() {
+    _carsFuture = Future.value([]);
+    _favoritesFuture = Future.value([]);
+    super.dispose();
+  }
+
   Future<void> _checkAuth() async {
     bool authorized = await tokenService.isAuthorized();
     if (authorized) {
