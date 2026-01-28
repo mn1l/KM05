@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:carsmeelien/config/api_keys.dart';
 import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/services/resource/customer.dart';
@@ -7,7 +8,7 @@ import 'package:carsmeelien/services/service.dart' as service;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-final apiUrl = '${service.apiBaseUrl}/api/rentals';
+final apiUrl = '${ApiKeys.apiBaseUrl}/api/rentals';
 
 Future<List<Rental>> getRentals() async {
   return await service.getList<Rental>(apiUrl, Rental.fromJson);

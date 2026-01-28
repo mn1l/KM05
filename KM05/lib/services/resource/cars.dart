@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import 'package:carsmeelien/config/api_keys.dart';
 import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:carsmeelien/services/service.dart' as service;
 
-final apiUrl = '${service.apiBaseUrl}/api/cars';
+final apiUrl = '${ApiKeys.apiBaseUrl}/api/cars';
 
 Future<Car> getCar(int id) async {
   return await service.get<Car>('$apiUrl/$id', Car.fromJson);

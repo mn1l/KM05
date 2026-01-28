@@ -1,10 +1,10 @@
 import 'dart:convert';
 
+import 'package:carsmeelien/config/api_keys.dart';
 import 'package:carsmeelien/services/auth/token.dart';
-import 'package:carsmeelien/services/service.dart' as service;
 import 'package:http/http.dart' as http;
 
-final apiUrl = '${service.apiBaseUrl}/api/authenticate';
+final apiUrl = '${ApiKeys.apiBaseUrl}/api/authenticate';
 
 // Could make this use service.post(),
 // however service.post always includes the authorization token in its requests which is unavailable at this point.

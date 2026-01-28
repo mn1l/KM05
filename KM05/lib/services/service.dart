@@ -5,8 +5,6 @@ import 'package:http/http.dart' as http;
 
 typedef FromJson<T> = T Function(Map<String, dynamic> json);
 
-final apiBaseUrl = 'http://192.168.178.42:8080';
-
 // Get single T object from Url
 Future<T> get<T>(String url, FromJson<T> fromJson) async {
   TokenService tokenService = TokenService();
