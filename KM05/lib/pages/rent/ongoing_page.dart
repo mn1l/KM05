@@ -3,7 +3,7 @@ import 'package:carsmeelien/core/utils/formatters.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/widgets/car_image.dart';
 import 'package:carsmeelien/models/rental.dart';
-import 'package:carsmeelien/pages/rent/inspection-form_page.dart';
+import 'package:carsmeelien/pages/rent/inspection_form_page.dart';
 import 'package:carsmeelien/pages/rent/widgets/step_indicator.dart';
 import 'package:flutter/material.dart';
 

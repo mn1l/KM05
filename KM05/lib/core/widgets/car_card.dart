@@ -1,9 +1,9 @@
 import 'package:carsmeelien/core/widgets/favorite_button.dart';
+import 'package:carsmeelien/pages/car_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/models/car.dart';
 import 'package:carsmeelien/core/widgets/car_image.dart';
-import 'package:carsmeelien/pages/rent/info_page.dart';
 
 class CarCard extends StatelessWidget {
   final Car car;
@@ -107,7 +107,7 @@ class CarCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => InfoPage(car: car)),
+        MaterialPageRoute(builder: (context) => CarDetailPage(car: car)),
       ),
       child: card,
     );

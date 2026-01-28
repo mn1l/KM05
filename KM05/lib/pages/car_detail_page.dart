@@ -5,19 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/models/car.dart';
-import 'package:carsmeelien/pages/rent/widgets/step_indicator.dart';
 import 'package:carsmeelien/pages/rent/widgets/car_info_card.dart';
 import 'package:carsmeelien/pages/rent/widgets/expandable_sections.dart';
 
-class InfoPage extends StatefulWidget {
+class CarDetailPage extends StatefulWidget {
   final Car car;
-  const InfoPage({super.key, required this.car});
+  const CarDetailPage({super.key, required this.car});
 
   @override
-  State<InfoPage> createState() => _InfoPageState();
+  State<CarDetailPage> createState() => _CarDetailPageState();
 }
 
-class _InfoPageState extends State<InfoPage> {
+class _CarDetailPageState extends State<CarDetailPage> {
   DateTimeRange _selectedDateRange = DateTimeRange(
     start: DateTime.now(),
     end: DateTime.now(),
@@ -108,7 +107,7 @@ class _InfoPageState extends State<InfoPage> {
           text: TextSpan(
             children: [
               TextSpan(text: 'Auto', style: AppAppBar.titleTextStyle1),
-              TextSpan(text: 'Huren', style: AppAppBar.titleTextStyle2),
+              TextSpan(text: 'Details', style: AppAppBar.titleTextStyle2),
             ],
           ),
         ),
@@ -118,7 +117,6 @@ class _InfoPageState extends State<InfoPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           children: [
-            StepIndicator(currentStep: 0),
             const SizedBox(height: 12),
 
             Text(

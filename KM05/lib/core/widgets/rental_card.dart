@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:carsmeelien/core/theme.dart';
 import 'package:carsmeelien/core/utils/formatters.dart';
 import 'package:carsmeelien/core/widgets/car_image.dart';
+import 'package:carsmeelien/pages/rent/rental_info_page.dart';
 
 class RentalCard extends StatelessWidget {
   final Rental rental;
@@ -23,25 +24,31 @@ class RentalCard extends StatelessWidget {
   });
 
   void handleNavigate(BuildContext context) async {
-    Widget? page = switch (rental.state) {
-      "RESERVED" || "PICKUP" => NavigationPage(rental: rental),
-      "ACTIVE" => OngoingPage(rental: rental),
-      _ => null,
-    };
+    Widget? page;
+    
+    if (rental.state == "RESERVED") {
+      page = RentalInfoPage(rental: rental);
+    } else if (rental.state == "PICKUP") {
+      page = NavigationPage(rental: rental);
+    } else if (rental.state == "ACTIVE") {
+      page = OngoingPage(rental: rental);
+    }
 
-    if (page != null && rental.isStartingToday) {
+    bool canOpen = (rental.state == "RESERVED") || rental.isStartingToday;
+
+    if (page != null && canOpen) {
       await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => page),
+        MaterialPageRoute(builder: (context) => page!),
       );
-
       onReturn?.call();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isActiveToday = rental.isStartingToday;
+    final bool isClickable = (rental.state == "RESERVED") || rental.isStartingToday;
+    final bool isHistory = rental.state == "RETURNED";
 
     Widget card = Container(
       height: height,
@@ -109,11 +116,11 @@ class RentalCard extends StatelessWidget {
       ),
     );
 
-    if (!isActiveToday) {
-      card = Opacity(opacity: 0.5, child: card);
+    if (isHistory) {
+      card = Opacity(opacity: 0.6, child: card);
     }
 
-    return _wrapInInkWell(context, card, isActiveToday);
+    return _wrapInInkWell(context, card, isClickable);
   }
 
   Widget _buildInfoRow(IconData icon, String text, {Color? iconColor}) {
@@ -140,11 +147,10 @@ class RentalCard extends StatelessWidget {
   }
 
   Widget _wrapInInkWell(BuildContext context, Widget card, bool enabled) {
-    final ink = InkWell(
+    return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: enabled ? () => handleNavigate(context) : null,
-      child: card,
+      child: width != null ? SizedBox(width: width, child: card) : card,
     );
-    return width != null ? SizedBox(width: width, child: ink) : ink;
   }
 }
