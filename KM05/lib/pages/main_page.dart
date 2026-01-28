@@ -1,3 +1,5 @@
+import 'package:carsmeelien/pages/login_page.dart';
+import 'package:carsmeelien/services/auth/token.dart';
 import 'package:flutter/material.dart';
 import 'package:carsmeelien/pages/home_page.dart';
 import 'package:carsmeelien/pages/rent/rent_page.dart';
@@ -23,6 +25,23 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuth();
+  }
+
+  void _checkAuth() async {
+    TokenService _tokenService = TokenService();
+    bool authorized = await _tokenService.isAuthorized();
+    if (!authorized && mounted) {
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (_) => const LoginPage()));
+      return;
+    }
   }
 
   @override
