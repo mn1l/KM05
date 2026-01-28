@@ -15,7 +15,8 @@ class _DamageReportsPageState extends State<DamageReportsPage> {
     {
       'carModel': 'Tesla Model 3',
       'kilometerstand': '45.000',
-      'beschrijving': 'Kras op de voorbumper aan de rechterkant. De kras is ongeveer 10 cm lang.',
+      'beschrijving':
+          'Kras op de voorbumper aan de rechterkant. De kras is ongeveer 10 cm lang.',
       'fotoUrls': [
         'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&h=300&fit=crop',
       ],
@@ -23,7 +24,8 @@ class _DamageReportsPageState extends State<DamageReportsPage> {
     {
       'carModel': 'BMW i3',
       'kilometerstand': '32.500',
-      'beschrijving': 'Deuk in de achterdeur aan de linkerkant. Geen lakschade.',
+      'beschrijving':
+          'Deuk in de achterdeur aan de linkerkant. Geen lakschade.',
       'fotoUrls': [
         'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400&h=300&fit=crop',
         'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=400&h=300&fit=crop',
@@ -70,7 +72,8 @@ class _DamageReportsPageState extends State<DamageReportsPage> {
                     carModel: report['carModel']!,
                     kilometerstand: report['kilometerstand']!,
                     beschrijving: report['beschrijving']!,
-                    fotoUrls: (report['fotoUrls'] as List<dynamic>).cast<String>(),
+                    fotoUrls: (report['fotoUrls'] as List<dynamic>)
+                        .cast<String>(),
                   );
                 },
               ),

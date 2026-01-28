@@ -11,8 +11,7 @@ class Rental {
   final String toDate;
   final String state;
 
-  final List<Inspection>
-  inspections; // nullable in JSON, but we default to empty
+  final List<Inspection> inspections;
   final Customer? customer;
   final Car? car;
 
@@ -41,14 +40,16 @@ class Rental {
       toDate: json['toDate'] as String? ?? '',
       state: json['state'] as String? ?? '',
       inspections: inspectionsJson != null
-              ? inspectionsJson.map((e) => Inspection.fromJson(e as Map<String, dynamic>)).toList()
-              : [],
+          ? inspectionsJson
+                .map((e) => Inspection.fromJson(e as Map<String, dynamic>))
+                .toList()
+          : [],
       customer: json['customer'] != null
-              ? Customer.fromJson(json['customer'] as Map<String, dynamic>)
-              : null,
+          ? Customer.fromJson(json['customer'] as Map<String, dynamic>)
+          : null,
       car: json['car'] != null
-              ? Car.fromJson(json['car'] as Map<String, dynamic>)
-              : null,
+          ? Car.fromJson(json['car'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -78,11 +79,13 @@ class Rental {
   }
 
   double get totalPrice => (car?.price ?? 0) * totalDays.toDouble();
-  
+
   bool get isStartingToday {
     final start = DateTime.parse(fromDate);
     final now = DateTime.now();
-    return start.year == now.year && start.month == now.month && start.day == now.day;
+    return start.year == now.year &&
+        start.month == now.month &&
+        start.day == now.day;
   }
 
   String get stateLabel {

@@ -5,18 +5,13 @@ class StepCircle extends StatelessWidget {
   final int number;
   final bool isActive;
 
-  const StepCircle({
-    super.key,
-    required this.number,
-    required this.isActive,
-  });
+  const StepCircle({super.key, required this.number, required this.isActive});
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
       radius: 18,
-      backgroundColor:
-          isActive ? AppColors.darkYellow : AppColors.darkBlue,
+      backgroundColor: isActive ? AppColors.darkYellow : AppColors.darkBlue,
       child: Text(
         number.toString(),
         style: TextStyle(

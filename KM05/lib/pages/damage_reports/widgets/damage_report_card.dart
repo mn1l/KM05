@@ -50,24 +50,15 @@ class DamageReportCard extends StatelessWidget {
             const SizedBox(height: 12),
             const Text(
               'Beschrijving',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
             const SizedBox(height: 4),
-            Text(
-              beschrijving,
-              style: const TextStyle(fontSize: 14),
-            ),
+            Text(beschrijving, style: const TextStyle(fontSize: 14)),
             if (fotoUrls != null && fotoUrls!.isNotEmpty) ...[
               const SizedBox(height: 12),
               const Text(
                 'Foto\'s',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
               const SizedBox(height: 8),
               SizedBox(
@@ -89,7 +80,10 @@ class DamageReportCard extends StatelessWidget {
                             width: 100,
                             height: 100,
                             color: AppColors.secondary,
-                            child: const Icon(Icons.image_not_supported, color: Colors.white),
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              color: Colors.white,
+                            ),
                           );
                         },
                         loadingBuilder: (context, child, loadingProgress) {
@@ -99,7 +93,9 @@ class DamageReportCard extends StatelessWidget {
                             height: 100,
                             color: AppColors.secondary,
                             child: const Center(
-                              child: CircularProgressIndicator(color: Colors.white),
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
                             ),
                           );
                         },
@@ -115,4 +111,3 @@ class DamageReportCard extends StatelessWidget {
     );
   }
 }
-
