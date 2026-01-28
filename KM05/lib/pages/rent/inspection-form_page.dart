@@ -27,6 +27,8 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
 
   final TextEditingController _odometerController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  
+  bool _isLoading = false;
 
   File? _imageFile;
   String _base64Photo = '';
@@ -74,7 +76,24 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
   }
 
   void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
+    if (!_formKey.currentState!.validate() || _isLoading) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      Position? position;
+      try {
+        position = await _determinePosition();
+      } catch (e) {
+        _handleError('Locatie fout: ${e.toString()}', isLocationError: true);
+        return;
+      }
+
+      if (position != null) {
+        await updateRentalLocation(widget.rental.id, position.longitude, position.latitude);
+        await updateCarLocation(widget.rental.car!.id, position.longitude, position.latitude);
+      }
+
       final newInspection = Inspection(
         id: 0,
         code: '',
@@ -86,49 +105,45 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
         completed: DateTime.now().toUtc().toIso8601String(),
       );
 
-      try {
-        Position? position = await _determinePosition();
-        if (position != null) {
-          double _longitude = position.longitude;
-          double _latitude = position.latitude;
-
-          await updateRentalLocation(widget.rental.id, _longitude, _latitude);
-          await updateCarLocation(widget.rental.car!.id, _longitude, _latitude);
-        }
-      } catch (e) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-            action: SnackBarAction(
-              label: 'Instellingen',
-              textColor: Colors.white,
-              onPressed: () => Geolocator.openAppSettings(),
-            ),
-          ),
-        );
-        return;
-      }
-
       await postInspection(newInspection);
+      await updateRentalState(widget.rental.id, "RETURNED");
 
       if (!mounted) return;
-
-      await updateRentalState(widget.rental.id, "RETURNED");
 
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const MainPage()),
         (route) => false,
       );
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Inspectie voltooid!')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Inspectie voltooid! Rit beëindigd.')),
+      );
+
+    } catch (e) {
+      _handleError('Er is iets misgegaan: ${e.toString()}');
     }
   }
 
-@override
+  void _handleError(String message, {bool isLocationError = false}) {
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        action: isLocationError 
+          ? SnackBarAction(
+              label: 'Instellingen', 
+              textColor: Colors.white, 
+              onPressed: () => Geolocator.openAppSettings(),
+            ) 
+          : null,
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppAppBar(
@@ -185,7 +200,6 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Image Picker Box
                         _buildImagePicker(),
                         const SizedBox(height: 20),
                       ],
@@ -214,6 +228,7 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      enabled: !_isLoading,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: icon != null ? Icon(icon, color: AppColors.darkBlue) : null,
@@ -230,7 +245,7 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
 
   Widget _buildImagePicker() {
     return GestureDetector(
-      onTap: _pickImage,
+      onTap: _isLoading ? null : _pickImage,
       child: Container(
         width: double.infinity,
         height: 160,
@@ -264,14 +279,24 @@ class _InspectionFormPageState extends State<InspectionFormPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.darkBlue,
           foregroundColor: Colors.white,
+          disabledBackgroundColor: AppColors.darkBlue.withOpacity(0.6),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 4,
+          elevation: _isLoading ? 0 : 4,
         ),
-        onPressed: _submitForm,
-        child: const Text(
-          'Inspectie Voltooien',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        onPressed: _isLoading ? null : _submitForm,
+        child: _isLoading 
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                ),
+              )
+            : const Text(
+                'Inspectie Voltooien',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
       ),
     );
   }
