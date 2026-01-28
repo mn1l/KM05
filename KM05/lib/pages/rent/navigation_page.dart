@@ -1,15 +1,15 @@
+import 'package:carsmeelien/core/utils/location_helper.dart';
+import 'package:carsmeelien/core/widgets/appbar.dart';
 import 'package:carsmeelien/models/rental.dart';
 import 'package:carsmeelien/pages/rent/ongoing_page.dart';
+import 'package:carsmeelien/pages/rent/widgets/map_card.dart';
+import 'package:carsmeelien/pages/rent/widgets/step_indicator.dart';
+import 'package:carsmeelien/services/map_service.dart';
 import 'package:carsmeelien/services/resource/rentals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:carsmeelien/core/theme.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:carsmeelien/config/api_keys.dart';
 
 class NavigationPage extends StatefulWidget {
   final Rental rental;
@@ -29,196 +29,132 @@ class _NavigationPageState extends State<NavigationPage> {
   void initState() {
     super.initState();
     updateRentalState(widget.rental.id, "PICKUP");
-    _getUserLocation();
+    _setupNavigation();
   }
 
-  Future<void> _getUserLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+Future<void> _setupNavigation() async {
+    try {
+      final userLatLng = await LocationHelper.getCurrentLocation();
+      
+      setState(() => _userLocation = userLatLng);
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied.');
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-
-    setState(() {
-      _userLocation = LatLng(position.latitude, position.longitude);
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (_userLocation != null && widget.rental.car != null) {
+      if (widget.rental.car != null) {
         final carLatLng = LatLng(
-          widget.rental.car!.latitude,
-          widget.rental.car!.longitude,
+          widget.rental.car!.latitude, 
+          widget.rental.car!.longitude
         );
-        final center = LatLng(
-          (_userLocation!.latitude + carLatLng.latitude) / 2,
-          (_userLocation!.longitude + carLatLng.longitude) / 2,
-        );
-        _mapController.move(center, 17.0);
 
-        final route = await fetchRoute(_userLocation!, carLatLng);
-        setState(() {
-          _routePoints = route;
-        });
+        final route = await MapService.fetchRoute(userLatLng, carLatLng);
+        
+        if (mounted) {
+          setState(() => _routePoints = route);
+          _mapController.move(userLatLng, 17.0);
+        }
       }
-    });
-  }
-
-  Future<List<LatLng>> fetchRoute(LatLng start, LatLng end) async {
-    final url = Uri.parse(
-      'https://api.openrouteservice.org/v2/directions/foot-walking',
-    );
-    final body = jsonEncode({
-      "coordinates": [
-        [start.longitude, start.latitude],
-        [end.longitude, end.latitude],
-      ],
-    });
-
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': ApiKeys.openRouteServiceKey,
-        'Content-Type': 'application/json',
-      },
-      body: body,
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      if (data['routes'] == null || data['routes'].isEmpty) {
-        throw Exception('No route found in ORS response');
-      }
-
-      final encodedPolyline = data['routes'][0]['geometry'] as String;
-
-      final polylinePoints = PolylinePoints().decodePolyline(encodedPolyline);
-
-      return polylinePoints
-          .map((p) => LatLng(p.latitude, p.longitude))
-          .toList();
-    } else {
-      throw Exception('Failed to fetch route: ${response.body}');
+    } catch (e) {
+      debugPrint("Navigation error: $e");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final carLatLng = widget.rental.car != null
-        ? LatLng(widget.rental.car!.latitude, widget.rental.car!.longitude)
-        : null;
+    if (_userLocation == null) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Navigation')),
-      body: _userLocation == null || carLatLng == null
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    initialCenter: _userLocation!,
-                    initialZoom: 17.0,
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                      userAgentPackageName: 'com.example.carsmeelien',
-                    ),
-                    if (_routePoints.isNotEmpty)
-                      PolylineLayer(
-                        polylines: [
-                          Polyline(
-                            points: _routePoints,
-                            color: AppColors.primary,
-                            strokeWidth: 4,
-                          ),
-                        ],
-                      ),
-                    MarkerLayer(
-                      markers: [
-                        Marker(
-                          point: _userLocation!,
-                          width: 50,
-                          height: 50,
-                          child: const Icon(
-                            Icons.my_location,
-                            color: AppColors.darkBlue,
-                            size: 40,
-                          ),
-                        ),
-                        Marker(
-                          point: carLatLng,
-                          width: 50,
-                          height: 50,
-                          child: const Icon(
-                            Icons.directions_car,
-                            color: AppColors.darkYellow,
-                            size: 40,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+      appBar: AppAppBar(
+        title: RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(text: 'Auto', style: AppAppBar.titleTextStyle1),
+              TextSpan(text: 'Huren', style: AppAppBar.titleTextStyle2),
+            ],
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            StepIndicator(currentStep: 1),
+            const SizedBox(height: 12),
 
-                Positioned(
-                  bottom: 20,
-                  left: 20,
-                  right: 20,
-                  child: SafeArea(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 8,
-                      ),
-                      onPressed: () async {
-                        final rental = await updateRentalState(
-                          widget.rental.id,
-                          "ACTIVE",
-                        );
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => OngoingPage(rental: rental),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Aangekomen',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+            Text(
+              'Navigeer naar de auto',
+              style: AppTextStyles.sectionHeader.copyWith(fontSize: 20),
+            ),
+            const SizedBox(height: 8),
+
+            Expanded(
+              child: MapCard(
+                controller: _mapController,
+                userLocation: _userLocation!,
+                carLocation: LatLng(widget.rental.car!.latitude, widget.rental.car!.longitude),
+                routePoints: _routePoints,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.darkBlue.withOpacity(0.1)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline, color: AppColors.darkBlue),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      "Volg de route op de kaart om bij de ${widget.rental.car?.brand} te komen.",
+                      style: TextStyle(color: Colors.grey[700], fontSize: 14),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+
+            const SizedBox(height: 24),
+
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.darkBlue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () async {
+                  final rental = await updateRentalState(
+                    widget.rental.id,
+                    "ACTIVE",
+                  );
+                  if (mounted) {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => OngoingPage(rental: rental),
+                      ),
+                    );
+                  }
+                },
+                child: const Text(
+                  'Aangekomen',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
     );
   }
 }
