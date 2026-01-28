@@ -48,6 +48,7 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   void _handleRental() {
+    if (_rentalDays < 1) return;
     createRental(_selectedDateRange, widget.car);
 
     Navigator.of(context).pushReplacement(
